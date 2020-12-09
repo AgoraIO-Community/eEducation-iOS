@@ -1,0 +1,32 @@
+//
+//  AgoraSmallClass.pch
+//  AgoraSmallClass
+//
+//  Created by yangmoumou on 2019/6/13.
+//  Copyright © 2019 Agora. All rights reserved.
+//
+
+#ifndef AgoraSmallClass_pch
+#define AgoraSmallClass_pch
+
+#ifdef __OBJC__
+
+#import "AgoraEduManager.h"
+#import "UIColor+Addition.h"
+#import "UIView+Constraint.h"
+#import "AlertViewUtil.h"
+
+#define kScreenHeight [UIScreen mainScreen].bounds.size.height
+#define kScreenWidth [UIScreen mainScreen].bounds.size.width
+#define WEAK(object) __weak typeof(object) weak##object = object
+#define IsPad (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+
+#define Notice_Reward_Effect @"Notice_Reward_Effect"
+
+#endif
+
+#endif /* AgoraSmallClass_pch */
+
+
+
+
