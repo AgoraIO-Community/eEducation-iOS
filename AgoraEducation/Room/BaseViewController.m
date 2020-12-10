@@ -309,9 +309,9 @@
         if(model.recordId == nil) {
             [self onEndRecord];
         }
-    } else {
-        [self onUnknownPropertyUpdated:classroom cause:cause];
     }
+       
+    [self onUnknownPropertyUpdated:classroom cause:cause];
 }
 
 #pragma mark UITextFieldDelegate

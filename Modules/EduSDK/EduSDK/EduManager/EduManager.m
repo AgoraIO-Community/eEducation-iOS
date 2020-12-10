@@ -76,7 +76,7 @@
     if(NoNullString(config.logDirectoryPath).length > 0){
         logConfig.directoryPath = config.logDirectoryPath;
     }
-    logConfig.consoleState = AgoraLogConsoleStateOpen;
+    logConfig.consoleState = AgoraLogConsoleStateClose;
     [AgoraLogService setupLog:logConfig];
 
     if (self = [super init]) {
