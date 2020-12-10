@@ -14,7 +14,7 @@
 #import "AssignGroupModel.h"
 #import "SchduleModel.h"
 
-#define BASE_URL @"http://api-solutions-dev.bj2.agoralab.co"
+#define BASE_URL @"https://api.agora.io"
 
 // /scene/apps/{appId}/v1/rooms/{roomUuid}/config
 #define HTTP_SCHDULE_CLASS @"%@/scene/apps/%@/v1/rooms/%@/config"

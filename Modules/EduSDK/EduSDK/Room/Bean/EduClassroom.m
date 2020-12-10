@@ -26,6 +26,14 @@
 @end
 
 @implementation EduClassroomState
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.courseState = EduCourseStateStop;
+    }
+    return self;
+}
 @end
 
 @interface EduClassroom ()

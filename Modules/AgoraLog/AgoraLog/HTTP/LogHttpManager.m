@@ -13,7 +13,7 @@
 #import "StringMD5.h"
 
 NSString *HTTP_LOG_SECRET = @"7AIsPeMJgQAppO0Z";
-NSString *HTTP_LOG_BASE_URL = @"http://api-solutions-dev.bj2.agoralab.co";
+NSString *HTTP_LOG_BASE_URL = @"https://api.agora.io";
 NSString *HTTP_LOG_INFO = @"";
 
 @implementation LogHttpManager

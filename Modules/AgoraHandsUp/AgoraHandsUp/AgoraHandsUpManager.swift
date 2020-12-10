@@ -25,7 +25,12 @@ public protocol AgoraHandsUpDelegate: class {
 
 public class AgoraHandsUpManager {
     
-    var handsUpType = AgoraHandsUpType.autoPublish
+    var handsUpType = AgoraHandsUpType.autoPublish {
+        didSet {
+            self.stopHandsUpTimer()
+        }
+    }
+    
     var handsUpState: AgoraHandsUpState = .none {
         didSet {
             self.updateHandsup()
@@ -187,22 +192,22 @@ extension AgoraHandsUpManager {
         timer?.resume()
     }
     fileprivate func startHandsTimeOut() {
-        self.stopHandsUpTimer()
-        
-        if handsUpTimeOut > 0 {
-            handsUpTimer = DispatchSource.makeTimerSource(flags: [], queue: DispatchQueue.global())
-            
-            let timeOut = DispatchTime.now() + DispatchTimeInterval.seconds(handsUpTimeOut)
-            handsUpTimer?.schedule(deadline: timeOut)
-            handsUpTimer?.setEventHandler {
-                DispatchQueue.main.async {
-                    self.stopTimer()
-                    self.handsUpState = .none
-                    self.delegate?.onHandsUpTimeOut()
-                }
-            }
-            handsUpTimer?.resume()
-        }
+//        self.stopHandsUpTimer()
+//
+//        if handsUpTimeOut > 0 {
+//            handsUpTimer = DispatchSource.makeTimerSource(flags: [], queue: DispatchQueue.global())
+//
+//            let timeOut = DispatchTime.now() + DispatchTimeInterval.seconds(handsUpTimeOut)
+//            handsUpTimer?.schedule(deadline: timeOut)
+//            handsUpTimer?.setEventHandler {
+//                DispatchQueue.main.async {
+//                    self.stopTimer()
+//                    self.handsUpState = .none
+//                    self.delegate?.onHandsUpTimeOut()
+//                }
+//            }
+//            handsUpTimer?.resume()
+//        }
     }
     
     fileprivate func stopTimer() {
@@ -214,8 +219,8 @@ extension AgoraHandsUpManager {
     }
     
     fileprivate func stopHandsUpTimer() {
-        if !(handsUpTimer?.isCancelled ?? true) {
-            handsUpTimer?.cancel()
-        }
+//        if !(handsUpTimer?.isCancelled ?? true) {
+//            handsUpTimer?.cancel()
+//        }
     }
 }

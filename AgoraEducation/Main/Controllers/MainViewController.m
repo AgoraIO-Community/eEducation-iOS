@@ -159,11 +159,6 @@
 }
 
 - (IBAction)joinRoom:(UIButton *)sender {
-
-//    self.userNameTextFiled.text = @"jerry4";
-//    self.classNameTextFiled.text = @"2221111";
-//    self.roomType.titleLabel.text = NSLocalizedString(@"MediumClassText", nil);
-
     NSString *userName = self.userNameTextFiled.text;
     NSString *roomName = self.classNameTextFiled.text;
     

@@ -20,7 +20,7 @@
 #import "EduKVCClassroomConfig.h"
 #import <objc/runtime.h>
 
-#define BASE_URL @"http://api-solutions-dev.bj2.agoralab.co/scene"
+#define BASE_URL @"https://api.agora.io/scene"
 #define APP_CODE @"edu-demo"
 
 #define LOG_PATH @"/AgoraEducation/"
