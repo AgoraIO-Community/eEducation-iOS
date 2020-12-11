@@ -102,7 +102,7 @@
     
     EduStream *stream = [[EduStream alloc] initWithStreamUuid:self.localUser.streamUuid userInfo:self.localUser];
     stream.hasAudio = YES;
-    stream.hasVideo = NO;
+    stream.hasVideo = YES;
     stream.sourceType = EduVideoSourceTypeCamera;
     
     [AgoraEduManager.shareManager.studentService publishStream:stream success:^{

@@ -68,9 +68,6 @@
     self.hasAudio = YES;
 
     self.chatTextFiled.contentTextFiled.delegate = self;
-    self.chatTextFiled.contentTextFiled.enabled = NO;
-    self.chatTextFiled.contentTextFiled.placeholder = NSLocalizedString(@"ProhibitedPostText", nil);
-    
     self.navigationView.delegate = self;
 
     [self initSelectSegmentBlock];
@@ -105,52 +102,8 @@
     [self updateTimeState:self.navigationView];
 }
 
-
-- (void)checkClickViewsState:(void (^) (BOOL canClick))block  {
-    
-    WEAK(self);
-    [AgoraEduManager.shareManager.roomManager getClassroomInfoWithSuccess:^(EduClassroom * _Nonnull room) {
-            
-        if (room.roomState.courseState != EduCourseStateStart) {
-            weakself.chatTextFiled.contentTextFiled.enabled = NO;
-            weakself.chatTextFiled.contentTextFiled.placeholder = NSLocalizedString(@"ProhibitedPostText", nil);
-        
-            weakself.handsUpBgView.userInteractionEnabled = NO;
-            block(NO);
-            return;
-        } else {
-            WEAK(self);
-            [AgoraEduManager.shareManager.roomManager getUserCountWithRole:EduRoleTypeTeacher success:^(NSUInteger count) {
-                if (count == 0) {
-                    weakself.chatTextFiled.contentTextFiled.enabled = NO;
-                    weakself.chatTextFiled.contentTextFiled.placeholder = NSLocalizedString(@"ProhibitedPostText", nil);
-                
-                    weakself.handsUpBgView.userInteractionEnabled = NO;
-                    block(NO);
-                    return;
-                } else {
-                    weakself.handsUpBgView.userInteractionEnabled = YES;
-                    block(YES);
-                    return;
-                }
-                
-            } failure:^(NSError * _Nonnull error) {
-                [weakself showTipWithMessage:error.localizedDescription];
-            }];
-        }
-    } failure:^(NSError * _Nonnull error) {
-        [weakself showTipWithMessage:error.localizedDescription];
-    }];
-}
-
 - (void)updateChatViews {
-    // class no start
-    WEAK(self);
-    [self checkClickViewsState:^(BOOL canClick) {
-        if(canClick) {
-            [weakself updateChatViews:weakself.chatTextFiled];
-        }
-    }];
+    [self updateChatViews:self.chatTextFiled];
 }
 
 - (void)setupView {
@@ -441,26 +394,15 @@
 // User in or out
 - (void)classroom:(EduClassroom * _Nonnull)classroom remoteUsersInit:(NSArray<EduUser*> *)users {
     [self updateRoleViews:users];
-    
-    [self checkClickViewsState:^(BOOL canClick) {
-                    
-    }];
 }
 - (void)classroom:(EduClassroom * _Nonnull)classroom remoteUsersJoined:(NSArray<EduUser*> *)users {
     [self updateRoleViews:users];
-    
-    [self checkClickViewsState:^(BOOL canClick) {
-                    
-    }];
 }
 - (void)classroom:(EduClassroom * _Nonnull)classroom remoteUsersLeft:(NSArray<EduUserEvent*> *)events leftType:(EduUserLeftType)type {
 
     for (EduUserEvent *event in events) {
         if(event.modifiedUser.role == EduRoleTypeTeacher){
             [self removeTeacherViews:event.modifiedUser];
-            [self checkClickViewsState:^(BOOL canClick) {
-                            
-            }];
         } else if(event.modifiedUser.role == EduRoleTypeStudent) {
             // refresh student list by roomProperty
             [self updateStudentList];
