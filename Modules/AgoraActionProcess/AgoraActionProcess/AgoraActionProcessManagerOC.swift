@@ -78,6 +78,39 @@ public class AgoraActionProcessManagerOC: NSObject {
             
         }, failure: failure)
     }
+    
+    // roomProperties: current room properties
+    @objc public func analyzeConfigInfoMessage(roomProperties: Any?) -> [AgoraActionConfigInfoMessageOC] {
+        
+        let swiftInfos = self.manager?.analyzeConfigInfoMessage(roomProperties: roomProperties)
+        
+        var infos: Array<AgoraActionConfigInfoMessageOC> = []
+        swiftInfos?.forEach({ (swiftInfo) in
+            let ocInfo = AgoraActionConfigInfoMessageOC()
+            ocInfo.processUuid = swiftInfo.processUuid
+            ocInfo.maxAccept = swiftInfo.maxAccept
+            ocInfo.maxWait = swiftInfo.maxWait
+            ocInfo.timeout = swiftInfo.timeout
+            infos.append(ocInfo)
+        })
+        return infos
+    }
+    
+    // message from `userMessageReceived` call back
+    @objc public func analyzeActionMessage(message: String?) -> AgoraActionInfoMessageOC? {
+        
+        guard let swiftInfo = self.manager?.analyzeActionMessage(message: message) else {
+            return nil
+        }
+        
+        let ocInfo = AgoraActionInfoMessageOC()
+        ocInfo.processUuid = swiftInfo.processUuid
+        ocInfo.action = AgoraActionTypeOC(rawValue: swiftInfo.action.rawValue) ?? .apply
+        ocInfo.fromUserUuid = swiftInfo.fromUserUuid
+        ocInfo.payload = swiftInfo.payload
+    
+        return ocInfo
+    }
 }
 
 extension AgoraActionProcessManagerOC {

@@ -25,16 +25,4 @@ typedef NS_ENUM(NSInteger, HandUpCommonState) {
 @property (nonatomic, assign) HandUpCommonState autoCoVideo;
 @end
 
-@interface HandsUpProperty : NSObject
-@property (nonatomic, assign) AgoraActionTypeOC type;
-
-// Maximum waiting number
-// 最大等待人数
-@property (nonatomic, assign) NSInteger maxWait;
-
-// Unresponsive timeout
-// 未响应超时时间
-@property (nonatomic, assign) NSInteger timeout;
-@end
-
 NS_ASSUME_NONNULL_END

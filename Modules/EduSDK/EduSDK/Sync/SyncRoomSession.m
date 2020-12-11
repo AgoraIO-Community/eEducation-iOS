@@ -658,6 +658,7 @@ static dispatch_queue_t AgoraAsyncGetReleaseQueue() {
 }
 
 - (void)handelFetchMessageListStart:(NSInteger)nextId count:(NSInteger)count {
+    //  如果同步没有完成，等待同步完成。 不做增量更新
     if (self.currentMaxSeq == -1) {
         return;
     }

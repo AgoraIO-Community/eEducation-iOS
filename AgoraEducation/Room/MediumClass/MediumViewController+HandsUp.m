@@ -56,7 +56,6 @@
         if(room.roomProperties == nil || ![room.roomProperties isKindOfClass:NSDictionary.class]) {
             return;
         }
-        
         NSDictionary *handUpStatesDic = room.roomProperties[@"handUpStates"];
         HandUpStates *handUpStates = [HandUpStates yy_modelWithDictionary:handUpStatesDic];
         weakself.handUpStates = handUpStates;
@@ -68,14 +67,12 @@
             type = AgoraHandsUpOCTypeApplyPublish;
         }
         
+        AgoraActionConfigInfoMessageOC *configInfo = [self.processManager analyzeConfigInfoMessageWithRoomProperties:room.roomProperties].firstObject;
         NSInteger timeOut = 0;
-        NSDictionary *processesDic = room.roomProperties[@"processes"];
-        if([processesDic isKindOfClass:NSDictionary.class]) {
-            HandsUpProperty *handsUpProperty =[HandsUpProperty yy_modelWithDictionary:processesDic[self.roomUuid]];
-            if(handsUpProperty){
-                timeOut = handsUpProperty.timeout;
-            }
+        if(configInfo != nil){
+            timeOut = configInfo.timeout;
         }
+        
         [weakself.handsUpManager setHandsUpTypeWithType:type handsUpTimeOut:timeOut];
         
         weakself.processUuid = weakself.roomUuid;

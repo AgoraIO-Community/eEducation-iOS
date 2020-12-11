@@ -55,3 +55,19 @@ import Foundation
     public var code: Int = 0
     public var msg: String = ""
 }
+
+// from channel message
+@objcMembers public class AgoraActionConfigInfoMessageOC: NSObject {
+    public var processUuid: String = ""
+    public var maxAccept: Int = 0
+    public var maxWait: Int = 0
+    public var timeout: Int = 0
+}
+
+// from peer message
+@objcMembers public class AgoraActionInfoMessageOC: NSObject {
+    public var processUuid: String = ""
+    public var action: AgoraActionTypeOC = .apply
+    public var fromUserUuid: String = ""
+    public var payload: Dictionary<String, Any>?
+}

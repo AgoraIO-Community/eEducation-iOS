@@ -19,7 +19,7 @@ public struct AgoraActionConfig {
     var baseURL: String = ""
 }
 
-public enum AgoraActionType: Int {
+public enum AgoraActionType: Int, Codable {
     case apply = 1, invitation, accept, reject, cancel
 }
 
@@ -57,3 +57,23 @@ public struct AgoraActionResult {
     var code: Int = AgoraActionHTTPOK
     var msg: String = ""
 }
+
+public struct AgoraActionConfigInfoMessage: Codable {
+    var maxAccept: Int = 0
+    var maxWait: Int = 0
+    var timeout: Int = 0
+    var processUuid: String = ""
+    
+    private enum CodingKeys: String, CodingKey {
+        case maxAccept, maxWait, timeout
+    }
+}
+
+// from peer message
+public struct AgoraActionInfoMessage  {
+    public var processUuid: String = ""
+    public var action: AgoraActionType = .apply
+    public var fromUserUuid: String = ""
+    public var payload: Dictionary<String, Any> = [:]
+}
+
