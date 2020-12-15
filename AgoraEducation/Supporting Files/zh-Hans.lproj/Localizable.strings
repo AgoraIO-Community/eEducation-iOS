@@ -22,6 +22,9 @@ AcceptRequestText = "老师接受了你的连麦申请!";
 RejectRequestText = "老师拒绝了你的连麦申请!";
 TeaCloseCoVideoText = "老师关闭了你的连麦!";
 
+TeaInvitationAudioText = "老师申请打开你的麦克风!";
+TeaInvitationVideoText = "老师申请打开你的摄像头!";
+
 KickOffClassroomText = "您被老师踢出了教室!";
 
 OffLineText = "（离线）";

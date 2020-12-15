@@ -9,24 +9,25 @@
 #import "AlertViewUtil.h"
 
 @implementation AlertViewUtil
-+ (void)showAlertWithController:(UIViewController *)viewController title:(NSString *)title cancelHandler:(KAlertHandler)cancelHandler sureHandler:(KAlertHandler)sureHandler {
++ (UIAlertController *)showAlertWithController:(UIViewController *)viewController title:(NSString *)title cancelHandler:(KAlertHandler)cancelHandler sureHandler:(KAlertHandler)sureHandler {
     
-    [AlertViewUtil showAlertWithController:viewController title:title message:nil cancelText:NSLocalizedString(@"CancelText", nil) sureText:NSLocalizedString(@"OKText", nil) cancelHandler:cancelHandler sureHandler:sureHandler];
+    return [AlertViewUtil showAlertWithController:viewController title:title message:nil cancelText:NSLocalizedString(@"CancelText", nil) sureText:NSLocalizedString(@"OKText", nil) cancelHandler:cancelHandler sureHandler:sureHandler];
 }
 
-+ (void)showAlertWithController:(UIViewController *)viewController title:(NSString *)title sureHandler:(KAlertHandler)sureHandler {
++ (UIAlertController *)showAlertWithController:(UIViewController *)viewController title:(NSString *)title sureHandler:(KAlertHandler)sureHandler {
     
-    [AlertViewUtil showAlertWithController:viewController title:title message:nil cancelText:NSLocalizedString(@"CancelText", nil) sureText:NSLocalizedString(@"OKText", nil) cancelHandler:nil sureHandler:sureHandler];
+    return [AlertViewUtil showAlertWithController:viewController title:title message:nil cancelText:NSLocalizedString(@"CancelText", nil) sureText:NSLocalizedString(@"OKText", nil) cancelHandler:nil sureHandler:sureHandler];
 }
 
-+ (void)showAlertWithController:(UIViewController *)viewController title:(NSString *)title {
++ (UIAlertController *)showAlertWithController:(UIViewController *)viewController title:(NSString *)title {
     
-    [AlertViewUtil showAlertWithController:viewController title:title message:nil cancelText:NSLocalizedString(@"CancelText", nil) sureText:nil cancelHandler:nil sureHandler:nil];
+    return [AlertViewUtil showAlertWithController:viewController title:title message:nil cancelText:NSLocalizedString(@"CancelText", nil) sureText:nil cancelHandler:nil sureHandler:nil];
 }
 
-+ (void)showAlertWithController:(UIViewController *)viewController title:(NSString *)title message:(NSString * _Nullable)message cancelText:(NSString * _Nullable)cancelText sureText:(NSString * _Nullable)sureText cancelHandler:(KAlertHandler _Nullable)cancelHandler sureHandler:(KAlertHandler _Nullable)sureHandler {
++ (UIAlertController *)showAlertWithController:(UIViewController *)viewController title:(NSString *)title message:(NSString * _Nullable)message cancelText:(NSString * _Nullable)cancelText sureText:(NSString * _Nullable)sureText cancelHandler:(KAlertHandler _Nullable)cancelHandler sureHandler:(KAlertHandler _Nullable)sureHandler {
     
     UIAlertController *alertVc = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    
     if (sureText != nil && sureText.length > 0) {
         UIAlertAction *actionDone = [UIAlertAction actionWithTitle:sureText style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             !sureHandler ? : sureHandler(action);
@@ -42,6 +43,8 @@
     }
     
     [viewController presentViewController:alertVc animated:YES completion:nil];
+    
+    return alertVc;
 }
 
 @end

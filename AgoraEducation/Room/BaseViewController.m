@@ -176,7 +176,7 @@
 }
 
 - (void)updateTimeState:(EENavigationView *)navigationView {
-    WEAK(self);
+    
     [AgoraEduManager.shareManager.roomManager getClassroomInfoWithSuccess:^(EduClassroom * _Nonnull room) {
         
         if(room.roomState.courseState == EduCourseStateStart) {
