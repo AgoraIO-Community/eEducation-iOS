@@ -180,7 +180,7 @@ CGFloat buttonSpacerHeight = 0;
         UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         
         [closeButton setFrame:CGRectMake(i * buttonWidth, container.bounds.size.height - buttonHeight, buttonWidth, buttonHeight)];
-        
+        [closeButton addTarget:self action:@selector(customDialogButtonTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
         [closeButton setTag:i + BUTTON_TAG_GAP];
         
         [closeButton setTitle:[self.buttonTitles objectAtIndex:i] forState:UIControlStateNormal];
@@ -192,6 +192,12 @@ CGFloat buttonSpacerHeight = 0;
         [closeButton.layer setCornerRadius:kCustomAlertViewCornerRadius];
         
         [container addSubview:closeButton];
+    }
+}
+
+- (void)customDialogButtonTouchUpInside:(id)sender {
+    if (self.onButtonTouchUpInside != NULL) {
+        self.onButtonTouchUpInside(self, [sender tag] - BUTTON_TAG_GAP);
     }
 }
 
