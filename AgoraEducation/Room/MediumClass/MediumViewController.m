@@ -52,10 +52,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *tipLabel;
 @property (weak, nonatomic) IBOutlet UIView *whiteboardBaseView;
 
-@property (strong, nonatomic) NSTimer *timer;
-@property (weak, nonatomic) UIAlertController *alertVC;
-@property (assign, nonatomic) NSInteger currentCount;
-
 @property (assign, nonatomic) BOOL hasVideo;
 @property (assign, nonatomic) BOOL hasAudio;
 @end
@@ -73,8 +69,6 @@
     self.hasVideo = YES;
     self.hasAudio = YES;
     
-    self.currentCount = AlertMaxCount;
-
     self.chatTextFiled.contentTextFiled.delegate = self;
     self.chatTextFiled.contentTextFiled.enabled = NO;
     self.chatTextFiled.contentTextFiled.placeholder = NSLocalizedString(@"ProhibitedPostText", nil);
@@ -354,12 +348,8 @@
 #pragma mark RoomProtocol
 - (void)closeRoom {
     WEAK(self);
-    self.alertVC = [AlertViewUtil showAlertWithController:self title:NSLocalizedString(@"QuitClassroomText", nil) sureHandler:^(UIAlertAction * _Nullable action) {
+    [AlertViewUtil showAlertWithController:self title:NSLocalizedString(@"QuitClassroomText", nil) sureHandler:^(UIAlertAction * _Nullable action) {
 
-        if (weakself.timer != nil && [weakself.timer isValid]) {
-            [weakself.timer invalidate];
-            weakself.timer = nil;
-        }
         [weakself.navigationView stopTimer];
         [AgoraEduManager releaseResource];
         [weakself dismissViewControllerAnimated:YES completion:nil];
@@ -456,49 +446,22 @@
     if(model.cmd != INVITATION_CMD) {
         return;
     }
-    
-    self.currentCount = AlertMaxCount;
-    
+
     NSString *tipMessage;
     if (model.payload.action == InvitationActionTypeAudio) {
         tipMessage = NSLocalizedString(@"TeaInvitationAudioText", nil);
     } else {
         tipMessage = NSLocalizedString(@"TeaInvitationVideoText", nil);
     }
-    tipMessage = [NSString stringWithFormat:@"%@(%ld)", tipMessage, (long)self.currentCount];
-    if (self.timer != nil && [self.timer isValid]) {
-        [self.timer invalidate];
-        self.timer = nil;
-    }
+
+    UIViewController *vc = self;
+//    while (vc.presentedViewController) {
+//        vc = vc.presentedViewController;
+//    }
     
     WEAK(self);
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:1 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        
-        NSString *replaceString = [NSString stringWithFormat:@"(%ld)", (long)weakself.currentCount];
-        NSString *sourceString = [weakself.alertVC.title stringByReplacingOccurrencesOfString:replaceString withString:@""];
-        weakself.currentCount -= 1;
-        if (weakself.currentCount <= 0) {
-            [weakself.alertVC dismissViewControllerAnimated:YES completion:^{
-                weakself.alertVC = nil;
-            }];
-            if (weakself.timer != nil && [weakself.timer isValid]) {
-                [weakself.timer invalidate];
-                weakself.timer = nil;
-            }
-            return;
-        } else {
-            NSString *title = [NSString stringWithFormat:@"%@(%ld)", sourceString, (long)weakself.currentCount];
-            weakself.alertVC.title = title;
-        }
-    }];
-
-    self.alertVC = [AlertViewUtil showAlertWithController:self title:tipMessage cancelHandler:^(UIAlertAction * _Nullable action) {
-        
-        if (weakself.timer != nil && [weakself.timer isValid]) {
-            [weakself.timer invalidate];
-            weakself.timer = nil;
-        }
-        
+    [AlertViewUtil showAlertWithController:vc title:tipMessage timerCount:AlertMaxCount cancelHandler:^(UIAlertAction * _Nullable action) {
+            
     } sureHandler:^(UIAlertAction * _Nullable action) {
         EduStream *stream = [[EduStream alloc] initWithStreamUuid:weakself.localUser.streamUuid userInfo:weakself.localUser];
         stream.hasAudio = NO;
@@ -519,14 +482,14 @@
             [AgoraEduManager.shareManager.studentService muteStream:stream success:^{
                         
             } failure:^(NSError * _Nonnull error) {
-                [weakself showTipWithMessage:error.localizedDescription];
+                [BaseViewController showToast:error.localizedDescription];
             }];
             
         } else {
             [AgoraEduManager.shareManager.studentService publishStream:stream success:^{
                         
             } failure:^(NSError * _Nonnull error) {
-                [weakself showTipWithMessage:error.localizedDescription];
+                [BaseViewController showToast:error.localizedDescription];
             }];
         }
     }];

@@ -105,7 +105,7 @@
         UIWindow *window = UIApplication.sharedApplication.windows.firstObject;
         UINavigationController *nvc = (UINavigationController*)window.rootViewController;
         if (nvc != nil) {
-             [AlertViewUtil showAlertWithController:nvc.visibleViewController title:NSLocalizedString(@"UploadLogSuccessText", nil) message:serialNumber cancelText:nil sureText:NSLocalizedString(@"OKText", nil) cancelHandler:nil sureHandler:nil];
+             [AlertViewUtil showAlertWithController:nvc.visibleViewController title:NSLocalizedString(@"UploadLogSuccessText", nil) message:serialNumber cancelText:nil sureText:NSLocalizedString(@"OKText", nil)  cancelHandler:nil sureHandler:nil];
         }
     } failure:^(NSError * error) {
         weakself.uploadLogBtn.hidden = NO;

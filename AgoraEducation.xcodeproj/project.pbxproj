@@ -96,6 +96,7 @@
 		78D7314823B3964400D2146C /* README.zh.md in Resources */ = {isa = PBXBuildFile; fileRef = 78D7314623B3964400D2146C /* README.zh.md */; };
 		78D731C223BCE4EA00D2146C /* BigViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78D731C123BCE4EA00D2146C /* BigViewController.m */; };
 		78EBDF292588797C00125907 /* InvitationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 78EBDF282588797C00125907 /* InvitationModel.m */; };
+		78EBDF542589D8BB00125907 /* AlertTimerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 78EBDF532589D8BB00125907 /* AlertTimerVC.m */; };
 		78ED3FFC24E179AC00931F50 /* RecordPropertyModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 78ED3FFA24E179AC00931F50 /* RecordPropertyModel.m */; };
 		78F275C8256BE1050001F3AD /* FLAnimatedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 78F275C3256BE1030001F3AD /* FLAnimatedImage.m */; };
 		78F275C9256BE1050001F3AD /* FLAnimatedImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 78F275C4256BE1030001F3AD /* FLAnimatedImageView.m */; };
@@ -293,6 +294,8 @@
 		78D731C123BCE4EA00D2146C /* BigViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BigViewController.m; sourceTree = "<group>"; };
 		78EBDF272588797C00125907 /* InvitationModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InvitationModel.h; sourceTree = "<group>"; };
 		78EBDF282588797C00125907 /* InvitationModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InvitationModel.m; sourceTree = "<group>"; };
+		78EBDF522589D8BB00125907 /* AlertTimerVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertTimerVC.h; sourceTree = "<group>"; };
+		78EBDF532589D8BB00125907 /* AlertTimerVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertTimerVC.m; sourceTree = "<group>"; };
 		78ED3FFA24E179AC00931F50 /* RecordPropertyModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordPropertyModel.m; sourceTree = "<group>"; };
 		78ED3FFB24E179AC00931F50 /* RecordPropertyModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordPropertyModel.h; sourceTree = "<group>"; };
 		78F275C3256BE1030001F3AD /* FLAnimatedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLAnimatedImage.m; sourceTree = "<group>"; };
@@ -618,6 +621,8 @@
 			children = (
 				783FB6CD240D0746007298C1 /* AlertViewUtil.h */,
 				783FB6CE240D0746007298C1 /* AlertViewUtil.m */,
+				78EBDF522589D8BB00125907 /* AlertTimerVC.h */,
+				78EBDF532589D8BB00125907 /* AlertTimerVC.m */,
 			);
 			path = AlertView;
 			sourceTree = "<group>";
@@ -1096,6 +1101,7 @@
 				7814155E2508785D0098B297 /* AssignGroupModel.m in Sources */,
 				78D730FE23B388A400D2146C /* OTOTeacherView.m in Sources */,
 				783FB6DE240D0746007298C1 /* UIView+EEBadge.m in Sources */,
+				78EBDF542589D8BB00125907 /* AlertTimerVC.m in Sources */,
 				78EBDF292588797C00125907 /* InvitationModel.m in Sources */,
 				7804C51025134C0500C69AA0 /* TextMessageModel.m in Sources */,
 				78141556250734690098B297 /* BOViewController.m in Sources */,

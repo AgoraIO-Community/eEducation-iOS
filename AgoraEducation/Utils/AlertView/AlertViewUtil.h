@@ -18,11 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIAlertController *)showAlertWithController:(UIViewController *)viewController title:(NSString *)title cancelHandler:(KAlertHandler)cancelHandler sureHandler:(KAlertHandler)sureHandler;
 
++ (UIAlertController *)showAlertWithController:(UIViewController *)viewController title:(NSString *)title timerCount:(NSInteger)timerCount cancelHandler:(KAlertHandler)cancelHandler sureHandler:(KAlertHandler)sureHandler;
+
 + (UIAlertController *)showAlertWithController:(UIViewController *)viewController title:(NSString *)title sureHandler:(KAlertHandler)sureHandler;
 
 + (UIAlertController *)showAlertWithController:(UIViewController *)viewController title:(NSString *)title;
 
 + (UIAlertController *)showAlertWithController:(UIViewController *)viewController title:(NSString *)title message:(NSString * _Nullable)message cancelText:(NSString * _Nullable)cancelText sureText:(NSString * _Nullable)sureText cancelHandler:(KAlertHandler _Nullable)cancelHandler sureHandler:(KAlertHandler _Nullable)sureHandler;
++ (UIAlertController *)showAlertWithController:(UIViewController *)viewController title:(NSString *)title message:(NSString * _Nullable)message cancelText:(NSString * _Nullable)cancelText sureText:(NSString * _Nullable)sureText timerCount:(NSInteger)timerCount cancelHandler:(KAlertHandler _Nullable)cancelHandler sureHandler:(KAlertHandler _Nullable)sureHandler;
 
 @end
 
