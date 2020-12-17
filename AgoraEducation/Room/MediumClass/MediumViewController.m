@@ -468,7 +468,7 @@
     
     WEAK(self);
     invitationView.onButtonTouchUpInside = ^(CustomAlertView * _Nonnull alertView, NSInteger buttonIndex) {
-      
+        
         [alertView close];
         
         if (buttonIndex == 1) {
@@ -508,6 +508,7 @@
     
     UILabel *contentView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 90)];
     contentView.text = tipMessage;
+    contentView.numberOfLines = 0;
     contentView.textColor = UIColor.blackColor;
     contentView.textAlignment = NSTextAlignmentCenter;
     [invitationView showWithContainerView:contentView];
