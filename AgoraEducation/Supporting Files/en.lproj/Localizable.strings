@@ -22,6 +22,9 @@ AcceptRequestText = "teacher accept your interactive request!";
 RejectRequestText = "teacher reject your interactive request!";
 TeaCloseCoVideoText = "teacher close your interactive!";
 
+TeaInvitationAudioText = "teacher applied to turn on your microphone!";
+TeaInvitationVideoText = "teacher applied to turn on your camera!";
+
 KickOffClassroomText = "you were kicked out of the classroom by the teacher!";
 
 OffLineText = "（offline）";

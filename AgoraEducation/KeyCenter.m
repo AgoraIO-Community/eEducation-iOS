@@ -11,19 +11,19 @@
 @implementation KeyCenter
 
 + (NSString *)agoraAppid {
-    return @"f488493d1886435f963dfb3d95984fd4";
+    return <#Your Agora App Id#>;
 }
 
 + (NSString *)customerId {
-    return @"8bf35333520648558ad1b736cfa5d2f1";
+    return <#Your Agora Customer Id#>;
 }
 
 + (NSString *)customerCertificate {
-    return @"745421c81abb4ac9a1fc7c7e50e91999";
+    return <#Your Agora Customer Certificate#>;
 }
 
 + (NSString *)boardAppid {
-    return @"646/P8Kb7e_DJZVAQw";
+    return <#Your Board App Id#>;
 }
 
 @end

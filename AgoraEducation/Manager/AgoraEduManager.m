@@ -121,12 +121,11 @@ static AgoraEduManager *manager = nil;
     httpConfig.customerId = KeyCenter.customerId;
     httpConfig.customerCertificate = KeyCenter.customerCertificate;
     httpConfig.roomName = config.roomName;
+    httpConfig.roleConfig = roleConfigDic;
+    
+    httpConfig.roomProperties = @{};
     if (config.roomProperty != nil) {
-        NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:config.roomProperty];
-        [dic addEntriesFromDictionary:roleConfigDic];
-        httpConfig.roleConfig = dic;
-    } else {
-        httpConfig.roleConfig = roleConfigDic;
+        httpConfig.roomProperties = config.roomProperty;
     }
     [HTTPManager schduleClassWithConfig:httpConfig success:^(SchduleModel * _Nonnull schduleModel) {
         

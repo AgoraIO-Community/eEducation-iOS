@@ -36,6 +36,7 @@ typedef NS_ENUM(NSInteger, HttpType) {
     NSDictionary *parameters = @{
         @"roomName":config.roomName,
         @"roleConfig":config.roleConfig,
+        @"roomProperties":config.roomProperties
     };
     
     NSString *encodeUrl = [url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];

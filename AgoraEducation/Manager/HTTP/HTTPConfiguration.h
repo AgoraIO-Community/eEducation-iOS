@@ -57,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *roomName;
 @property (nonatomic, copy) NSDictionary *roleConfig;
+@property (nonatomic, copy) NSDictionary *roomProperties;
 
 @end
 
