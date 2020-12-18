@@ -17,6 +17,8 @@ class GroupListView: UITableView {
     @objc var groupState: GroupCommonState = GroupCommonState.on
     @objc var groups: Array<GroupStudentList>?
     @objc var noGroups: Array<NoGroupStudentList>?
+    
+    @objc weak var muteDelegate: RoomProtocol?
 
     @objc func setupTableView() {
         
@@ -67,6 +69,7 @@ extension GroupListView: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: NoGroupCellID, for: indexPath) as! MCStudentViewCell
             cell.selectionStyle = .none
             cell.contentView.alpha = 1
+            cell.delegate = self
             
             let array = noGroups ?? []
             if (array.count > indexPath.row) {
@@ -81,11 +84,7 @@ extension GroupListView: UITableViewDelegate, UITableViewDataSource {
                     streamInfo = MCStreamInfo(userUuid: studentInfo.userUuid, userName: studentInfo.userName, hasAudio: false, hasVideo: false, streamState: 0, userState: studentInfo.state)
                 }
                 cell.stream = streamInfo!
-//
-//                // 0=offline  1= online
-//                if studentInfo.state == 0 {
-//                    cell.contentView.alpha = 0.3
-//                }
+
             }
             return cell
         }
@@ -101,3 +100,12 @@ extension GroupListView: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+extension GroupListView: RoomProtocol {
+    func muteVideoStream(_ mute: Bool) {
+        self.muteDelegate?.muteVideoStream?(mute)
+    }
+    
+    func muteAudioStream(_ mute: Bool) {
+        self.muteDelegate?.muteAudioStream?(mute)
+    }
+}

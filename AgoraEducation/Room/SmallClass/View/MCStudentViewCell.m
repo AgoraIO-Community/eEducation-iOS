@@ -24,13 +24,37 @@
     self.muteVideoButton.selected = YES;
     self.muteAudioButton.selected = YES;
     self.muteWhiteButton.selected = YES;
+    
+    [self.muteAudioButton addTarget:self action:@selector(muteAudio:) forControlEvents:(UIControlEventTouchUpInside)];
+    [self.muteVideoButton addTarget:self action:@selector(muteVideo:) forControlEvents:(UIControlEventTouchUpInside)];
+}
+
+- (void)muteAudio:(UIButton *)sender {
+    
+    if (self.stream.streamState == 1 && [self.stream.userUuid isEqualToString:self.userUuid]) {
+        
+        if (self.delegate && [self.delegate respondsToSelector:@selector(muteAudioStream:)]) {
+            [self.delegate muteAudioStream:sender.selected];
+        }
+        
+        sender.selected = !sender.selected;
+    }
+}
+
+- (void)muteVideo:(UIButton *)sender {
+    
+    if (self.stream.streamState == 1 && [self.stream.userUuid isEqualToString:self.userUuid]) {
+        
+        if (self.delegate && [self.delegate respondsToSelector:@selector(muteVideoStream:)]) {
+            [self.delegate muteVideoStream:sender.selected];
+        }
+        
+        sender.selected = !sender.selected;
+    }
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-}
-
-- (IBAction)muteAction:(UIButton *)sender {
 }
 
 - (void)updateEnableButtons:(NSString *)userUuid {
@@ -58,25 +82,36 @@
         [self.nameLabel setText:string];
     }
     
-    NSString *videoImageName;
-    // offline
-//    if (stream.userState == 0) {
-//        videoImageName = stream.hasVideo ? @"roomCameraOn" : @"roomCameraOff";
-//    } else {
-        videoImageName = stream.hasVideo ? @"icon-video-blue" : @"icon-videooff-blue";
-//    }
-    [self.muteVideoButton setImage:[UIImage imageNamed:videoImageName] forState:(UIControlStateNormal)];
+    NSString *offVideoImageName;
+    NSString *onVideoImageName;
+    // self covideo
+    if (stream.streamState == 1 && [stream.userUuid isEqualToString:self.userUuid]) {
+        onVideoImageName = @"icon-video-blue";
+        offVideoImageName = @"icon-videooff-blue";
+    } else {
+        onVideoImageName = @"roomCameraOn";
+        offVideoImageName = @"roomCameraOff";
+    }
+    
+    [self.muteVideoButton setImage:[UIImage imageNamed:offVideoImageName] forState:(UIControlStateNormal)];
+    [self.muteVideoButton setImage:[UIImage imageNamed:onVideoImageName] forState:(UIControlStateSelected)];
     self.muteVideoButton.selected = stream.hasVideo ? YES : NO;
     
-    NSString *audioImageName;
-    // offline
-//    if (stream.userState == 0) {
-//        audioImageName = stream.hasAudio ? @"icon-speaker" : @"icon-speaker-off";
-//    } else {
-        audioImageName = stream.hasAudio ? @"icon-speaker-blue" : @"icon-speakeroff-blue";
-//    }
+    NSString *onAudioImageName;
+    NSString *offAudioImageName;
+    // self covideo
+    if (stream.streamState == 1 && [stream.userUuid isEqualToString:self.userUuid]) {
+        
+        onAudioImageName = @"icon-speaker-blue";
+        offAudioImageName = @"icon-speakeroff-blue";
+        
+    } else {
+        onAudioImageName = @"icon-speaker";
+        offAudioImageName = @"icon-speaker-off";
+    }
     
-    [self.muteAudioButton setImage:[UIImage imageNamed:audioImageName] forState:(UIControlStateNormal)];
+    [self.muteAudioButton setImage:[UIImage imageNamed:offAudioImageName] forState:(UIControlStateNormal)];
+    [self.muteAudioButton setImage:[UIImage imageNamed:onAudioImageName] forState:(UIControlStateSelected)];
     self.muteAudioButton.selected = stream.hasAudio ? YES : NO;
 }
 

@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol RoomProtocol <NSObject>
 @optional
-- (void)muteVideoStream:(BOOL)stream;
-- (void)muteAudioStream:(BOOL)stream;
+- (void)muteVideoStream:(BOOL)mute;
+- (void)muteAudioStream:(BOOL)mute;
 - (void)closeRoom;
 @end
 
