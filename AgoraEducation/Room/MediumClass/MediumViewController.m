@@ -459,8 +459,9 @@
     if(model == nil || model.cmd != INVITATION_CMD) {
         // action
         AgoraActionStopOptionsOC *action = [AgoraActionStopOptionsOC yy_modelWithJSON:textMessage.message];
-        if(action != nil && action.actionType == AgoraActionTypeOCCancel) {
-            [self.handsUpManager updateHandsUpWithState:AgoraHandsUpOCStateDisabled];
+        if(action != nil && action.action == AgoraActionTypeOCReject) {
+//            self showTipWithMessage:<#(NSString *)#>
+            [self.handsUpManager updateHandsUpWithState:AgoraHandsUpOCStateNone];
         }
     } else {
         [self invitationProcessWithModel: model];
@@ -566,10 +567,12 @@
 - (void)localStreamAdded:(EduStreamEvent*)event {
     self.localUser.streams = @[event.modifiedStream];
     [self updateRoleCanvas:@[event.modifiedStream]];
+    [self.handsUpManager updateHandsUpWithState:AgoraHandsUpOCStateDisabled];
 }
 - (void)localStreamUpdated:(EduStreamEvent*)event {
     self.localUser.streams = @[event.modifiedStream];
     [self updateRoleCanvas:@[event.modifiedStream]];
+    [self.handsUpManager updateHandsUpWithState:AgoraHandsUpOCStateDisabled];
 }
 - (void)localStreamRemoved:(EduStreamEvent*)event {
     self.localUser.streams = @[];

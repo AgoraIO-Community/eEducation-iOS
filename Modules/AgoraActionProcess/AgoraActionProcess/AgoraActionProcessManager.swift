@@ -109,7 +109,7 @@ public class AgoraActionProcessManager {
         // /invitation/apps/{appId}/v1/rooms/{roomUuid}/users/{toUserUuid}/process/{processUuid}
         let urlString = "\(self.config.baseURL)/invitation/apps/\(self.config.appId)/v1/rooms/\(self.config.roomUuid)/users/\(options.toUserUuid)/process/\(options.processUuid)"
 
-        let params = ["action":options.actionType.rawValue, "fromUserUuid":options.fromUserUuid, "payload":options.payload] as [String : Any]
+        let params = ["action":options.action.rawValue, "fromUserUuid":options.fromUserUuid, "payload":options.payload] as [String : Any]
         let headers = self.headers();
         
         AgoraActionHTTPClient.del(urlString, params: params, headers: headers) { (dictionary) in

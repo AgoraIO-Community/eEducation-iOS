@@ -47,7 +47,7 @@ public struct AgoraActionStartOptions {
 public struct AgoraActionStopOptions {
     var toUserUuid: String = ""
     var processUuid: String = ""
-    var actionType: AgoraActionType = .accept
+    var action: AgoraActionType = .accept
     var fromUserUuid: String = ""
     var payload: [String: Any] = [:]
 }

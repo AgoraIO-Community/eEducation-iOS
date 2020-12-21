@@ -138,10 +138,12 @@ extension AgoraHandsUpManager {
         
         handsUpBtn.isUserInteractionEnabled = true
         
-        var imageString = "handsdown"
+        var imageString = ""
         if (self.handsUpState == .disabled) {
             imageString = "handsdisable"
             handsUpBtn.isUserInteractionEnabled = false
+        } else if (self.handsUpState == .handsUp) {
+            imageString = "handsdown"
         } else {
             imageString = "handsup"
         }
