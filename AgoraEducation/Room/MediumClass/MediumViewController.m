@@ -707,7 +707,16 @@
         case PropertyCauseTypeStudentReward:
             if (groupStates.state == GroupCommonStateOn) {
                 [self updateStudentList: classroom.roomProperties];
-                [NSNotificationCenter.defaultCenter postNotificationName:Notice_Reward_Effect object:propertyCause.userUuid];
+                
+                if (propertyCause.cmd == PropertyCauseTypeGroupReward) {
+                    NSDictionary *groups = NoNullDictionary(NoNullDictionary(classroom.roomProperties)[@"groups"]);
+                    GroupsInfo *info = [GroupsInfo yy_modelWithDictionary:groups[propertyCause.groupUuid]];
+                    for(NSString *member in info.members) {
+                        [NSNotificationCenter.defaultCenter postNotificationName:Notice_Reward_Effect object:member];
+                    }
+                } else {
+                    [NSNotificationCenter.defaultCenter postNotificationName:Notice_Reward_Effect object:propertyCause.userUuid];
+                }
             }
             break;
         case PropertyCauseTypeHandsUp:
@@ -731,7 +740,11 @@
     GroupStates *groupStates = [GroupStates yy_modelWithDictionary:groupStatesDic];
     InteractOutGroups *interactOutGroups = [InteractOutGroups yy_modelWithDictionary:interactOutGroupsDic];
     NSDictionary *groups = NoNullDictionary(roomProperties[@"groups"]);
-    
+    NSArray *keysArray = [groups allKeys];
+    NSArray *groupKeyArray = [keysArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
+        return [obj1 compare:obj2 options:NSNumericSearch];
+    }];
+
     self.studentListView.groupState = groupStates.state;
     
     // close group
@@ -755,8 +768,8 @@
                     
             // group list
             NSMutableArray<GroupStudentList *> *groupList = [NSMutableArray array];
-            
-            for (NSString *key in groups.allKeys) {
+                    
+            for (NSString *key in groupKeyArray) {
                 GroupsInfo *info = [GroupsInfo yy_modelWithDictionary:groups[key]];
                 
                 GroupStudentList *group = [GroupStudentList new];
@@ -767,16 +780,14 @@
                     group.isPK = YES;
                 }
                 
-                NSString *queryStr = @"";
+                NSMutableArray<NSPredicate *> *predicates = [NSMutableArray array];
                 for (NSString *member in info.members) {
-                    if (queryStr.length == 0) {
-                        queryStr = [NSString stringWithFormat:@"userUuid == %@", member];
-                    } else {
-                        queryStr = [NSString stringWithFormat:@"%@ & userUuid == %@", queryStr, member];
-                    }
+                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userUuid = %@", member];
+                    [predicates addObject:predicate];
                 }
-                NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"%@", queryStr];
-                NSArray *userFilters = [studentList filteredArrayUsingPredicate:userPredicate];
+
+                NSCompoundPredicate *compoundPredicate = [[NSCompoundPredicate alloc] initWithType:NSOrPredicateType subpredicates:predicates];
+                NSArray *userFilters = [studentList filteredArrayUsingPredicate:compoundPredicate];
                 group.students = userFilters;
                 
                 [groupList addObject:group];

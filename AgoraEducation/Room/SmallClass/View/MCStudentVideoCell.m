@@ -10,7 +10,7 @@
 #import "FLAnimatedImage.h"
 #import "UIView+Constraint.h"
 
-//#define FUN_REWORD
+#define FUN_REWORD
 
 @implementation StudentVideoStream
 @end
@@ -30,7 +30,9 @@
     self = [super initWithFrame:frame];
     if (self) {
         [self setUpView];
+#ifdef FUN_REWORD
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(showRewardEffect:) name:Notice_Reward_Effect object:nil];
+#endif
     }
     return self;
 }
