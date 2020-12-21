@@ -22,6 +22,7 @@ import UIKit
     case none
     case handsUp
     case handsDown
+    case disabled
 }
 
 public class AgoraHandsUpManagerOC: NSObject {
@@ -52,6 +53,8 @@ public class AgoraHandsUpManagerOC: NSObject {
             swiftState = .handsUp
         } else if(state == .handsDown) {
             swiftState = .handsDown
+        } else if(state == .disabled) {
+            swiftState = .disabled
         }
         self.manager.handsUpState = swiftState
     }

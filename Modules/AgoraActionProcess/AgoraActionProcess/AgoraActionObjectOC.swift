@@ -45,7 +45,7 @@ import Foundation
 @objcMembers public class AgoraActionStopOptionsOC: NSObject {
     public var toUserUuid: String = ""
     public var processUuid: String = ""
-    public var actionType: AgoraActionTypeOC = .accept
+    public var action: AgoraActionTypeOC = .accept
     public var fromUserUuid: String = ""
     public var payload: [String: Any] = [:]
 }

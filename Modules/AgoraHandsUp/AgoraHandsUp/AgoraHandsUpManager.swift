@@ -11,6 +11,7 @@ public enum AgoraHandsUpState {
     case none   // 没有举手
     case handsUp
     case handsDown
+    case disabled
 }
 
 enum AgoraHandsUpType {
@@ -37,7 +38,7 @@ public class AgoraHandsUpManager {
             
             if (self.handsUpState == .handsUp) {
                 self.startHandsTimeOut()
-            } else if (self.handsUpState == .handsDown) {
+            } else {
                 self.stopHandsUpTimer()
             }
         }
@@ -63,7 +64,7 @@ public class AgoraHandsUpManager {
         
         let view = UIView(frame: CGRect(x: 0, y: 0, width: 42, height: 46))
         view.backgroundColor = UIColor.white
-        
+  
         let bundle = Bundle(for: type(of: self))
         let bubble = UIImage(named: "bubble", in: bundle, compatibleWith: nil)
         let bgView = UIImageView(image: bubble)
@@ -79,7 +80,7 @@ public class AgoraHandsUpManager {
         
         let btn = UIButton(type: .custom)
         
-        let imageString = self.handsUpState == .handsUp ? "handsdown" : "handsup"
+        let imageString = self.handsUpState == .handsUp ? "handsdown" : (self.handsUpState == .disabled ? "handsdisable" : "handsup")
         
         let bundle = Bundle(for: type(of: self))
         let normal = UIImage(named: imageString, in: bundle, compatibleWith: nil)
@@ -135,7 +136,17 @@ extension AgoraHandsUpManager {
     
     fileprivate func updateHandsup() {
         
-        let imageString = self.handsUpState == .handsUp ? "handsdown" : "handsup"
+        handsUpBtn.isUserInteractionEnabled = true
+        
+        var imageString = ""
+        if (self.handsUpState == .disabled) {
+            imageString = "handsdisable"
+            handsUpBtn.isUserInteractionEnabled = false
+        } else if (self.handsUpState == .handsUp) {
+            imageString = "handsdown"
+        } else {
+            imageString = "handsup"
+        }
         
         let bundle = Bundle(for: type(of: self))
         let normal = UIImage(named: imageString, in: bundle, compatibleWith: nil)

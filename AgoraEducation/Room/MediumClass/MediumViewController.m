@@ -118,6 +118,7 @@
     
     self.segmentedView.segmentType = SegmentTypeList;
     [self.studentListView setupTableView];
+    self.studentListView.muteDelegate = self;
     
     WhiteBoardManager *whiteBoardManager = AgoraEduManager.shareManager.whiteBoardManager;
     UIView *boardView = [whiteBoardManager getBoardView];
@@ -304,6 +305,14 @@
 }
 
 #pragma mark RoomProtocol
+- (void)muteVideoStream:(BOOL)mute {
+    [self setLocalStreamVideo:!mute audio:self.hasAudio streamState:LocalStreamStateUpdate];
+}
+
+- (void)muteAudioStream:(BOOL)mute {
+    [self setLocalStreamVideo:self.hasVideo audio:!mute streamState:LocalStreamStateUpdate];
+}
+
 - (void)closeRoom {
     WEAK(self);
     [AlertViewUtil showAlertWithController:self title:NSLocalizedString(@"QuitClassroomText", nil) sureHandler:^(UIAlertAction * _Nullable action) {
@@ -339,8 +348,8 @@
                 if (stream.userInfo.role == EduRoleTypeTeacher){
                     continue;
                 }
-                
-                // 显示
+            
+                // display
                 StudentVideoStream *videoStream = [[StudentVideoStream alloc] initWithStreamUuid:stream.streamUuid userInfo:stream.userInfo];
                 videoStream.streamName = stream.streamName;
                 videoStream.sourceType = stream.sourceType;
@@ -401,77 +410,15 @@
 - (void)userMessageReceived:(EduTextMessage*)textMessage {
     
     InvitationModel *model = [InvitationModel yy_modelWithJSON:textMessage.message];
-    if(model.cmd != INVITATION_CMD) {
-        return;
-    }
-    NSString *tipMessage;
-    if (model.payload.action == InvitationActionTypeAudio) {
-        if(self.invitationAudioView != nil){
-            return;
+    if(model == nil || model.cmd != INVITATION_CMD) {
+        // action
+        AgoraActionStopOptionsOC *action = [AgoraActionStopOptionsOC yy_modelWithJSON:textMessage.message];
+        if(action != nil && action.action == AgoraActionTypeOCReject) {
+//            self showTipWithMessage:<#(NSString *)#>
+            [self.handsUpManager updateHandsUpWithState:AgoraHandsUpOCStateNone];
         }
-        tipMessage = NSLocalizedString(@"TeaInvitationAudioText", nil);
     } else {
-        if(self.invitationVideoView != nil){
-            return;
-        }
-        tipMessage = NSLocalizedString(@"TeaInvitationVideoText", nil);
-    }
-    
-    CustomAlertView *invitationView = [[CustomAlertView alloc] init];
-    [invitationView setButtonTitles:[NSMutableArray arrayWithObjects:NSLocalizedString(@"CancelText", nil), NSLocalizedString(@"OKText", nil), nil]];
-    
-    WEAK(self);
-    invitationView.onButtonTouchUpInside = ^(CustomAlertView * _Nonnull alertView, NSInteger buttonIndex) {
-        
-        [alertView close];
-        
-        if (buttonIndex == 1) {
-            
-            EduStream *stream = [[EduStream alloc] initWithStreamUuid:weakself.localUser.streamUuid userInfo:weakself.localUser];
-            stream.hasAudio = NO;
-            stream.hasVideo = NO;
-            if (weakself.localUser.streams != nil && weakself.localUser.streams.count > 0) {
-                EduStream *localStream = weakself.localUser.streams.firstObject;
-                stream.hasAudio = localStream.hasAudio;
-                stream.hasVideo = localStream.hasVideo;
-            }
-            if (model.payload.action == InvitationActionTypeAudio) {
-                stream.hasAudio = 1;
-            } else {
-                stream.hasVideo = 1;
-            }
-            
-            if (weakself.localUser.streams != nil && weakself.localUser.streams.count > 0) {
-                
-                [AgoraEduManager.shareManager.studentService muteStream:stream success:^{
-                            
-                } failure:^(NSError * _Nonnull error) {
-                    [BaseViewController showToast:error.localizedDescription];
-                }];
-                
-            } else {
-                [AgoraEduManager.shareManager.studentService publishStream:stream success:^{
-                            
-                } failure:^(NSError * _Nonnull error) {
-                    [BaseViewController showToast:error.localizedDescription];
-                }];
-            }
-        }
-    };
-    [invitationView setUseMotionEffects:true];
-    
-    UILabel *contentView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 90)];
-    contentView.text = tipMessage;
-    contentView.numberOfLines = 0;
-    contentView.textColor = UIColor.blackColor;
-    contentView.textAlignment = NSTextAlignmentCenter;
-    [invitationView showWithContainerView:contentView];
-    [invitationView startCountDown:AlertMaxCount];
-
-    if (model.payload.action == InvitationActionTypeAudio) {
-        self.invitationAudioView = invitationView;
-    } else {
-        self.invitationVideoView = invitationView;
+        [self invitationProcessWithModel: model];
     }
 }
 
@@ -563,10 +510,12 @@
 - (void)localStreamAdded:(EduStreamEvent*)event {
     self.localUser.streams = @[event.modifiedStream];
     [self updateRoleCanvas:@[event.modifiedStream]];
+    [self.handsUpManager updateHandsUpWithState:AgoraHandsUpOCStateDisabled];
 }
 - (void)localStreamUpdated:(EduStreamEvent*)event {
     self.localUser.streams = @[event.modifiedStream];
     [self updateRoleCanvas:@[event.modifiedStream]];
+    [self.handsUpManager updateHandsUpWithState:AgoraHandsUpOCStateDisabled];
 }
 - (void)localStreamRemoved:(EduStreamEvent*)event {
     self.localUser.streams = @[];
@@ -576,6 +525,8 @@
     } else if(event.modifiedStream.userInfo.role == EduRoleTypeStudent) {
         [self removeStudentCanvas:@[event.modifiedStream]];
     }
+    
+    [self.handsUpManager updateHandsUpWithState:AgoraHandsUpOCStateNone];
 }
 
 #pragma mark UITextFieldDelegate
@@ -802,8 +753,7 @@
 - (void)getGroupStudentList:(NSDictionary *)roomProperties complete:(void (^) (NSArray<NoGroupStudentList *> *))block {
     
     NSDictionary *students = NoNullDictionary(roomProperties[@"students"]);
-    
-    WEAK(self);
+
     [AgoraEduManager.shareManager.roomManager getFullUserListWithSuccess:^(NSArray<EduUser *> * _Nonnull users) {
         
         [AgoraEduManager.shareManager.roomManager getFullStreamListWithSuccess:^(NSArray<EduStream *> * _Nonnull streams) {
@@ -837,5 +787,79 @@
     } failure:^(NSError * _Nonnull error) {
         [BaseViewController showToast:error.localizedDescription];
     }];
+}
+
+#pragma mark invitation
+- (void)invitationProcessWithModel: (InvitationModel *)model {
+    
+    NSString *tipMessage;
+    if (model.payload.action == InvitationActionTypeAudio) {
+        if(self.invitationAudioView != nil){
+            return;
+        }
+        tipMessage = NSLocalizedString(@"TeaInvitationAudioText", nil);
+    } else {
+        if(self.invitationVideoView != nil){
+            return;
+        }
+        tipMessage = NSLocalizedString(@"TeaInvitationVideoText", nil);
+    }
+    
+    CustomAlertView *invitationView = [[CustomAlertView alloc] init];
+    [invitationView setButtonTitles:[NSMutableArray arrayWithObjects:NSLocalizedString(@"CancelText", nil), NSLocalizedString(@"OKText", nil), nil]];
+    
+    WEAK(self);
+    invitationView.onButtonTouchUpInside = ^(CustomAlertView * _Nonnull alertView, NSInteger buttonIndex) {
+        
+        [alertView close];
+        
+        if (buttonIndex == 1) {
+            
+            EduStream *stream = [[EduStream alloc] initWithStreamUuid:weakself.localUser.streamUuid userInfo:weakself.localUser];
+            stream.hasAudio = NO;
+            stream.hasVideo = NO;
+            if (weakself.localUser.streams != nil && weakself.localUser.streams.count > 0) {
+                EduStream *localStream = weakself.localUser.streams.firstObject;
+                stream.hasAudio = localStream.hasAudio;
+                stream.hasVideo = localStream.hasVideo;
+            }
+            if (model.payload.action == InvitationActionTypeAudio) {
+                stream.hasAudio = 1;
+            } else {
+                stream.hasVideo = 1;
+            }
+            
+            if (weakself.localUser.streams != nil && weakself.localUser.streams.count > 0) {
+                
+                [AgoraEduManager.shareManager.studentService muteStream:stream success:^{
+                            
+                } failure:^(NSError * _Nonnull error) {
+                    [BaseViewController showToast:error.localizedDescription];
+                }];
+                
+            } else {
+                [AgoraEduManager.shareManager.studentService publishStream:stream success:^{
+                            
+                } failure:^(NSError * _Nonnull error) {
+                    [BaseViewController showToast:error.localizedDescription];
+                }];
+            }
+        }
+    };
+    [invitationView setUseMotionEffects:true];
+    
+    UILabel *contentView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 300, 90)];
+    contentView.text = tipMessage;
+    contentView.numberOfLines = 0;
+    contentView.textColor = UIColor.blackColor;
+    contentView.textAlignment = NSTextAlignmentCenter;
+    [invitationView showWithContainerView:contentView];
+    [invitationView startCountDown:AlertMaxCount];
+
+    if (model.payload.action == InvitationActionTypeAudio) {
+        self.invitationAudioView = invitationView;
+    } else {
+        self.invitationVideoView = invitationView;
+    }
 }
 @end

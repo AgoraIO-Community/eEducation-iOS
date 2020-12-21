@@ -9,7 +9,7 @@
 #import "MCStudentListView.h"
 #import "MCStudentViewCell.h"
 
-@interface MCStudentListView ()<UITableViewDelegate,UITableViewDataSource>
+@interface MCStudentListView ()<UITableViewDelegate, UITableViewDataSource, RoomProtocol>
 @property (weak, nonatomic) UITableView *studentTableView;
 @property (nonatomic, strong) NSArray<EduStream*> *studentArray;
 @property (nonatomic, strong) NSArray<NSString*> *grantUserArray;
@@ -60,8 +60,7 @@
     if (!cell) {
         cell = [[[NSBundle mainBundle] loadNibNamed:@"MCStudentViewCell" owner:self options:nil] firstObject];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        [cell.muteAudioButton addTarget:self action:@selector(muteAudio:) forControlEvents:(UIControlEventTouchUpInside)];
-        [cell.muteVideoButton addTarget:self action:@selector(muteVideo:) forControlEvents:(UIControlEventTouchUpInside)];
+        cell.delegate = self;
     }
 
     EduStream *model = self.studentArray[indexPath.row];
@@ -81,29 +80,21 @@
     return 40;
 }
 
-- (void)muteAudio:(UIButton *)sender {
-
-    if (self.delegate && [self.delegate respondsToSelector:@selector(muteAudioStream:)]) {
-        [self.delegate muteAudioStream:sender.selected];
-    }
-    sender.selected = !sender.selected;
-    
-    NSString *imageName = sender.selected ? @"icon-speaker":@"icon-speaker-off";
-    [sender setImage:[UIImage imageNamed:imageName] forState:(UIControlStateNormal)];
-}
-
-- (void)muteVideo:(UIButton *)sender {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(muteVideoStream:)]) {
-        [self.delegate muteVideoStream:sender.selected];
-    }
-    sender.selected = !sender.selected;
-    NSString *imageName = sender.selected ? @"roomCameraOn":@"roomCameraOff";
-    [sender setImage:[UIImage imageNamed:imageName] forState:(UIControlStateNormal)];
-}
-
 - (void)setUserUuid:(NSString *)userUuid {
     _userUuid = userUuid;
     [self.studentTableView reloadData];
+}
+
+#pragma mark RoomProtocol
+- (void)muteVideoStream:(BOOL)mute {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(muteVideoStream:)]) {
+        [self.delegate muteVideoStream:mute];
+    }
+}
+- (void)muteAudioStream:(BOOL)mute {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(muteAudioStream:)]) {
+        [self.delegate muteAudioStream:mute];
+    }
 }
 
 @end
