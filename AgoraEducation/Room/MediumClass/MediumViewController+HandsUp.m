@@ -168,7 +168,7 @@
             options.toUserUuid = teacher.userUuid;
             options.processUuid = self.processUuid;
             options.fromUserUuid = self.localUser.userUuid;
-            options.actionType = AgoraActionTypeOCCancel;
+            options.action = AgoraActionTypeOCCancel;
             options.payload = @{
                 @"action":@(AgoraActionTypeOCCancel),
                 @"fromUser":@{
@@ -177,6 +177,7 @@
                     @"role":@(self.localUser.role)
                 }
             };
+            options.waitAck = 0;
             
             [weakself.processManager stopAgoraActionProcessWithOptions:options success:^(AgoraActionResultOC * _Nonnull result) {
                 

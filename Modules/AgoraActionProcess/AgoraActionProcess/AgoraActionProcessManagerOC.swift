@@ -68,7 +68,7 @@ public class AgoraActionProcessManagerOC: NSObject {
         
         let rawValue = options.action.rawValue
         
-        let swiftOptions = AgoraActionStopOptions(toUserUuid: options.toUserUuid, processUuid: options.processUuid, action: AgoraActionType(rawValue: rawValue) ?? .accept, fromUserUuid: options.fromUserUuid, payload: options.payload)
+        let swiftOptions = AgoraActionStopOptions(toUserUuid: options.toUserUuid, processUuid: options.processUuid, action: AgoraActionType(rawValue: rawValue) ?? .accept, fromUserUuid: options.fromUserUuid, payload: options.payload, waitAck: options.waitAck)
         
         self.manager?.stopAgoraActionProcess(options: swiftOptions, success: {[weak self] (result) in
             

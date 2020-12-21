@@ -48,6 +48,7 @@ import Foundation
     public var action: AgoraActionTypeOC = .accept
     public var fromUserUuid: String = ""
     public var payload: [String: Any] = [:]
+    public var waitAck: Int = 1
 }
 
 // response

@@ -50,6 +50,7 @@ public struct AgoraActionStopOptions {
     var action: AgoraActionType = .accept
     var fromUserUuid: String = ""
     var payload: [String: Any] = [:]
+    var waitAck: Int = 1
 }
 
 // response
