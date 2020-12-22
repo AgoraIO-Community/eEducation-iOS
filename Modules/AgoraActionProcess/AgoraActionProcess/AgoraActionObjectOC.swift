@@ -21,6 +21,10 @@ import Foundation
     case apply = 1, invitation, accept, reject, cancel
 }
 
+@objc public enum AgoraActionStopTypeOC: Int {
+    case ignoreAck = 0, waitAck
+}
+
 @objcMembers public class AgoraActionOptionsOC: NSObject {
     
     public var actionType: AgoraActionTypeOC = .apply
@@ -35,39 +39,44 @@ import Foundation
     public var processUuid: String = ""
 }
 
+// params
 @objcMembers public class AgoraActionStartOptionsOC: NSObject {
     public var toUserUuid: String = ""
     public var processUuid: String = ""
     public var fromUserUuid: String = ""
     public var payload: [String: Any] = [:]
 }
-
 @objcMembers public class AgoraActionStopOptionsOC: NSObject {
     public var toUserUuid: String = ""
     public var processUuid: String = ""
     public var action: AgoraActionTypeOC = .accept
     public var fromUserUuid: String = ""
     public var payload: [String: Any] = [:]
+    public var waitAck: AgoraActionStopTypeOC = .waitAck
 }
 
 // response
-@objcMembers public class AgoraActionResultOC: NSObject {
-    public var code: Int = 0
-    public var msg: String = ""
+@objcMembers public class AgoraActionUserOC: NSObject {
+    public var userUuid: String = ""
+    public var userName: String = ""
+    public var role: String = ""
+}
+@objcMembers public class AgoraActionInfoResponseOC: NSObject {
+    public var processUuid: String = ""
+    public var action: AgoraActionTypeOC = .accept
+    public var fromUser: AgoraActionUserOC?
+    public var payload: [String: Any] = [:]
 }
 
 // from channel message
-@objcMembers public class AgoraActionConfigInfoMessageOC: NSObject {
+@objcMembers public class AgoraActionConfigInfoResponseOC: NSObject {
     public var processUuid: String = ""
     public var maxAccept: Int = 0
     public var maxWait: Int = 0
     public var timeout: Int = 0
 }
 
-// from peer message
-@objcMembers public class AgoraActionInfoMessageOC: NSObject {
-    public var processUuid: String = ""
-    public var action: AgoraActionTypeOC = .apply
-    public var fromUserUuid: String = ""
-    public var payload: Dictionary<String, Any>?
+@objcMembers public class AgoraActionResponseOC: NSObject {
+    public var code: Int = 0
+    public var msg: String = ""
 }

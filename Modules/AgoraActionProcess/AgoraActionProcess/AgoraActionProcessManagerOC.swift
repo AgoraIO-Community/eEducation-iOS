@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias AgoraActionHTTPSuccessOC = (AgoraActionResultOC) -> Void
+public typealias AgoraActionHTTPSuccessOC = (AgoraActionResponseOC) -> Void
 public typealias AgoraActionHTTPFailureOC = (Error) -> Void
 
 public class AgoraActionProcessManagerOC: NSObject {
@@ -33,7 +33,7 @@ public class AgoraActionProcessManagerOC: NSObject {
         
         self.manager?.setAgoraAction(options: swiftoOtions, success: {[weak self] (result) in
             
-            if let ocResult = self?.mapToAgoraActionResultOC(result) {
+            if let ocResult = self?.mapToAgoraActionResponseOC(result) {
                 success?(ocResult)
             }
 
@@ -44,7 +44,7 @@ public class AgoraActionProcessManagerOC: NSObject {
         
         self.manager?.deleteAgoraAction(processUuid: processUuid, success: {[weak self] (result) in
             
-            if let ocResult = self?.mapToAgoraActionResultOC(result) {
+            if let ocResult = self?.mapToAgoraActionResponseOC(result) {
                 success?(ocResult)
             }
             
@@ -57,7 +57,7 @@ public class AgoraActionProcessManagerOC: NSObject {
         
         self.manager?.startAgoraActionProcess(options: swiftOptions, success: {[weak self] (result) in
             
-            if let ocResult = self?.mapToAgoraActionResultOC(result) {
+            if let ocResult = self?.mapToAgoraActionResponseOC(result) {
                 success?(ocResult)
             }
             
@@ -67,12 +67,12 @@ public class AgoraActionProcessManagerOC: NSObject {
     @objc public func stopAgoraActionProcess(options: AgoraActionStopOptionsOC, success: AgoraActionHTTPSuccessOC?, failure: AgoraActionHTTPFailureOC?) {
         
         let rawValue = options.action.rawValue
-        
-        let swiftOptions = AgoraActionStopOptions(toUserUuid: options.toUserUuid, processUuid: options.processUuid, action: AgoraActionType(rawValue: rawValue) ?? .accept, fromUserUuid: options.fromUserUuid, payload: options.payload)
+
+        let swiftOptions = AgoraActionStopOptions(toUserUuid: options.toUserUuid, processUuid: options.processUuid, action: AgoraActionType(rawValue: rawValue) ?? .accept, fromUserUuid: options.fromUserUuid, payload: options.payload, waitAck: AgoraActionStopType(rawValue: rawValue) ?? .ignoreAck)
         
         self.manager?.stopAgoraActionProcess(options: swiftOptions, success: {[weak self] (result) in
             
-            if let ocResult = self?.mapToAgoraActionResultOC(result) {
+            if let ocResult = self?.mapToAgoraActionResponseOC(result) {
                 success?(ocResult)
             }
             
@@ -80,13 +80,13 @@ public class AgoraActionProcessManagerOC: NSObject {
     }
     
     // roomProperties: current room properties
-    @objc public func analyzeConfigInfoMessage(roomProperties: Any?) -> [AgoraActionConfigInfoMessageOC] {
+    @objc public func analyzeConfigInfoMessage(roomProperties: Any?) -> [AgoraActionConfigInfoResponseOC] {
         
         let swiftInfos = self.manager?.analyzeConfigInfoMessage(roomProperties: roomProperties)
         
-        var infos: Array<AgoraActionConfigInfoMessageOC> = []
+        var infos: Array<AgoraActionConfigInfoResponseOC> = []
         swiftInfos?.forEach({ (swiftInfo) in
-            let ocInfo = AgoraActionConfigInfoMessageOC()
+            let ocInfo = AgoraActionConfigInfoResponseOC()
             ocInfo.processUuid = swiftInfo.processUuid
             ocInfo.maxAccept = swiftInfo.maxAccept
             ocInfo.maxWait = swiftInfo.maxWait
@@ -97,25 +97,30 @@ public class AgoraActionProcessManagerOC: NSObject {
     }
     
     // message from `userMessageReceived` call back
-    @objc public func analyzeActionMessage(message: String?) -> AgoraActionInfoMessageOC? {
+    @objc public func analyzeActionMessage(message: String?) -> AgoraActionInfoResponseOC? {
         
         guard let swiftInfo = self.manager?.analyzeActionMessage(message: message) else {
             return nil
         }
         
-        let ocInfo = AgoraActionInfoMessageOC()
+        let ocUserInfo = AgoraActionUserOC()
+        ocUserInfo.userName = swiftInfo.fromUser.userName
+        ocUserInfo.userUuid = swiftInfo.fromUser.userUuid
+        ocUserInfo.role = swiftInfo.fromUser.role
+        
+        let ocInfo = AgoraActionInfoResponseOC()
         ocInfo.processUuid = swiftInfo.processUuid
         ocInfo.action = AgoraActionTypeOC(rawValue: swiftInfo.action.rawValue) ?? .apply
-        ocInfo.fromUserUuid = swiftInfo.fromUserUuid
+        ocInfo.fromUser = ocUserInfo
         ocInfo.payload = swiftInfo.payload
-    
+
         return ocInfo
     }
 }
 
 extension AgoraActionProcessManagerOC {
-    fileprivate func mapToAgoraActionResultOC(_ result: AgoraActionResult) -> AgoraActionResultOC {
-        let ocResult = AgoraActionResultOC()
+    fileprivate func mapToAgoraActionResponseOC(_ result: AgoraActionResponse) -> AgoraActionResponseOC {
+        let ocResult = AgoraActionResponseOC()
         ocResult.code = result.code
         ocResult.msg = result.msg
         return ocResult

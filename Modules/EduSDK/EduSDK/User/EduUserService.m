@@ -645,6 +645,7 @@ typedef NS_ENUM(NSUInteger, StreamState) {
     param[@"audioSourceType"] = @(1);
     param[@"videoState"] = @(stream.hasVideo ? 1 : 0);
     param[@"audioState"] = @(stream.hasAudio ? 1 : 0);
+    param[@"generateToken"] = @(0);
     if(state == StreamStateCreate || state == StreamStateUpdate) {
         [HttpManager upsetStreamWithRoomUuid:self.channelId userUuid:stream.userInfo.userUuid userToken:self.userToken streamUuid:stream.streamUuid param:param apiVersion:APIVersion1 analysisClass:PublishModel.class success:^(id<BaseModel>  _Nullable objModel) {
 

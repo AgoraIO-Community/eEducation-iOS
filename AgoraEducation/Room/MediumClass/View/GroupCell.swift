@@ -44,23 +44,18 @@ class GroupCell: UITableViewCell {
         guard let groupModel = model else {
             return
         }
- 
-        let str = groupModel.groupName
-        if groupModel.isPK {
-            let tag = "(正在台上)"
-            let attr: NSMutableAttributedString = NSMutableAttributedString(string: str+tag)
-            attr.addAttribute(.foregroundColor, value:UIColor(red: 68/255.0, green: 162/255.0, blue: 252/255.0, alpha: 1), range: NSMakeRange(str.count, tag.count))
-            groupName.attributedText = attr
-        } else {
-            let attr: NSMutableAttributedString = NSMutableAttributedString(string: str)
-            groupName.attributedText = attr
-        }
-        
+         
         var lastItemView: UIView?
+        var onLineCount = 0
         for (index, studentModel) in groupModel.students.enumerated() {
             
             guard let itemView = Bundle.main.loadNibNamed("GroupItemView", owner: self, options: nil)?.first as? GroupItemView else {
                 return
+            }
+            
+            // 0=offline  1= online
+            if(studentModel.state == 1){
+                onLineCount += 1
             }
             
             itemView.updateView(model: studentModel)
@@ -75,5 +70,19 @@ class GroupCell: UITableViewCell {
         }
         
         lastItemView?.equalRight(to: self.scroll, attribute: .right, value: 0)
+        
+        let str = groupModel.groupName
+        let countStr = "(\(onLineCount)人)"
+        if groupModel.isPK {
+            let tag = "(正在台上)"
+            let attr: NSMutableAttributedString = NSMutableAttributedString(string: str+countStr+tag)
+            attr.addAttribute(.foregroundColor, value:UIColor(red: 88/255.0, green: 99/255.0, blue: 118/255.0, alpha: 1), range: NSMakeRange(str.count, countStr.count))
+            attr.addAttribute(.foregroundColor, value:UIColor(red: 68/255.0, green: 162/255.0, blue: 252/255.0, alpha: 1), range: NSMakeRange(str.count + countStr.count, tag.count))
+            groupName.attributedText = attr
+        } else {
+            let attr: NSMutableAttributedString = NSMutableAttributedString(string: str+countStr)
+            attr.addAttribute(.foregroundColor, value:UIColor(red: 88/255.0, green: 99/255.0, blue: 118/255.0, alpha: 1), range: NSMakeRange(str.count, countStr.count))
+            groupName.attributedText = attr
+        }
     }
 }

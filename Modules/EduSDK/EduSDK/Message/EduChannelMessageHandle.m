@@ -146,6 +146,7 @@
                 if (index == keys.count - 1) {
                     [currentLevelDictionary setValue:model.changeProperties[keyPath] forKey:key];
                     
+         
                 } else {
                     NSString *key = keys[index];
                     if (![currentLevelDictionary[key] isKindOfClass:NSDictionary.class]) {
@@ -241,6 +242,7 @@
     id obj = [userFilters.firstObject yy_modelToJSONObject];
     [user yy_modelSetWithJSON:obj];
     user.isChatAllowed = !model.muteChat;
+    user.state = 1;
     [self.syncRoomSession updateUser:@[user] sequence:channelMsgModel.sequence];
 }
 

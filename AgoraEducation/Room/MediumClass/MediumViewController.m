@@ -23,6 +23,7 @@
 #import "CustomAlertView.h"
 
 #define NoNullDictionary(x) ([x isKindOfClass:NSDictionary.class] ? x : @{})
+#define NoNullString(x) ([x isKindOfClass:NSString.class] ? x : @"")
 #define VideoConstraint (IsPad ? 140 : 80)
 
 #define AlertMaxCount 10
@@ -336,6 +337,9 @@
         
         NSDictionary *interactOutGroupsDic = NoNullDictionary(room.roomProperties[@"interactOutGroups"]);
         InteractOutGroups *interactOutGroups = [InteractOutGroups yy_modelWithDictionary:interactOutGroupsDic];
+        NSDictionary *groups = NoNullDictionary(room.roomProperties[@"groups"]);
+        NSDictionary *g2 = NoNullDictionary(groups[NoNullString(interactOutGroups.g2)]);
+        GroupsInfo *group2Info = [GroupsInfo yy_modelWithDictionary:g2];
         
         NSDictionary *students = NoNullDictionary(room.roomProperties[@"students"]);
 
@@ -356,7 +360,7 @@
                 videoStream.hasVideo = stream.hasVideo;
                 videoStream.hasAudio = stream.hasAudio;
     
-                if ([stream.streamUuid isEqualToString:interactOutGroups.g2]) {
+                if (group2Info != nil && [group2Info.members containsObject:stream.userInfo.userUuid]) {
                     [weakself.btmStudentVideoList addObject:videoStream];
                 } else {
                     [weakself.topStudentVideoList addObject:videoStream];
@@ -418,7 +422,8 @@
             [self.handsUpManager updateHandsUpWithState:AgoraHandsUpOCStateNone];
         }
     } else {
-        [self invitationProcessWithModel: model];
+        // the teacher invited the students to open the audio and video
+        // [self invitationProcessWithModel: model];
     }
 }
 
@@ -611,7 +616,6 @@
     [self updateChatViews];
 }
 - (void)onUpdateCourseState {
-    [self updateTimeState];
     [self updateChatViews];
 }
 - (void)onBoardFollowMode:(BOOL)enable {
@@ -650,6 +654,7 @@
         case PropertyCauseTypeGroupPK:
             // showPK
             [self updateStudentList: classroom.roomProperties];
+            [self reloadStudentViews];
             break;
         case PropertyCauseTypeGroupAudio:
             // none

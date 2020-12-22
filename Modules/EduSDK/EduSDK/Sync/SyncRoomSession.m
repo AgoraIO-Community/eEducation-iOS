@@ -458,7 +458,7 @@ static dispatch_queue_t AgoraAsyncGetReleaseQueue() {
 
                 } else if (streamModel.state == 1) {
                     // update
-                    BaseSnapshotUserModel *originalObj = [self.streamClass new];
+                    BaseSnapshotStreamModel *originalObj = [self.streamClass new];
                     id obj = [filterStream yy_modelToJSONObject];
                     [originalObj yy_modelSetWithJSON:obj];
 

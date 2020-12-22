@@ -8,7 +8,9 @@
 import Foundation
 import AgoraActionProcess.OCFile.HTTP
 
-public typealias AgoraActionHTTPSuccess = (AgoraActionResult) -> Void
+fileprivate let HTTP_VERSION = "v2"
+
+public typealias AgoraActionHTTPSuccess = (AgoraActionResponse) -> Void
 public typealias AgoraActionHTTPFailure = (Error) -> Void
 
 public class AgoraActionProcessManager {
@@ -24,14 +26,14 @@ public class AgoraActionProcessManager {
     }
     
     // roomProperties: current room properties
-    public func analyzeConfigInfoMessage(roomProperties: Any?) -> [AgoraActionConfigInfoMessage] {
+    public func analyzeConfigInfoMessage(roomProperties: Any?) -> [AgoraActionConfigInfoResponse] {
         
         guard let properties = roomProperties as? Dictionary<String, Any>, let processes = properties["processes"] as? Dictionary<String, Any> else {
             return []
         }
         
         let processUuids = processes.keys
-        var infos: Array<AgoraActionConfigInfoMessage> = []
+        var infos: Array<AgoraActionConfigInfoResponse> = []
         processUuids.forEach { (processUuid) in
             
             let value = processes[processUuid]
@@ -43,7 +45,7 @@ public class AgoraActionProcessManager {
                 return
             }
             
-            guard var model = try? JSONDecoder().decode(AgoraActionConfigInfoMessage.self, from: data) else {
+            guard var model = try? JSONDecoder().decode(AgoraActionConfigInfoResponse.self, from: data) else {
                 return
             }
             model.processUuid = (processUuid as? String) ?? ""
@@ -54,7 +56,7 @@ public class AgoraActionProcessManager {
     }
     
     // message from `userMessageReceived` call back
-    public func analyzeActionMessage(message: String?) -> AgoraActionInfoMessage? {
+    public func analyzeActionMessage(message: String?) -> AgoraActionInfoResponse? {
         
         if message == nil || !JSONSerialization.isValidJSONObject(message) {
             return nil
@@ -73,14 +75,16 @@ public class AgoraActionProcessManager {
         }
         let processUuid = (dic["processUuid"] as? String) ?? ""
         let action = (dic["action"] as? Int) ?? AgoraActionType.apply.rawValue
-        let fromUserUuid = (dic["fromUserUuid"] as? String) ?? ""
+        let fromUser: Dictionary<String, Any> = (dic["fromUser"] as? Dictionary<String, Any>) ?? [:]
         let payload: Dictionary<String, Any> = (dic["payload"] as? Dictionary<String, Any>) ?? [:]
         
-        var info: AgoraActionInfoMessage = AgoraActionInfoMessage()
-        info.processUuid = processUuid
-        info.action = AgoraActionType(rawValue: action) ?? AgoraActionType.apply
-        info.fromUserUuid = fromUserUuid
-        info.payload = payload
+        
+        let userUuid = (fromUser["userUuid"] as? String) ?? ""
+        let userName = (fromUser["userName"] as? String) ?? ""
+        let role = (fromUser["role"] as? String) ?? ""
+        let actionUser = AgoraActionUser(userUuid: userUuid, userName: userName, role: role)
+        
+        var info: AgoraActionInfoResponse = AgoraActionInfoResponse(processUuid: processUuid, action: AgoraActionType(rawValue: action) ?? AgoraActionType.apply, fromUser: actionUser, payload: payload)
         return info
     }
 
@@ -88,7 +92,7 @@ public class AgoraActionProcessManager {
     public func setAgoraAction(options: AgoraActionOptions, success: AgoraActionHTTPSuccess?, failure: AgoraActionHTTPFailure?) {
         
         // /invitation/apps/{appId}/v1/rooms/{roomUuid}/process/{processUuid}
-        let urlString = "\(self.config.baseURL)/invitation/apps/\(self.config.appId)/v1/rooms/\(self.config.roomUuid)/process/\(options.processUuid)"
+        let urlString = "\(self.config.baseURL)/invitation/apps/\(self.config.appId)/\(HTTP_VERSION)/rooms/\(self.config.roomUuid)/process/\(options.processUuid)"
 
         let params = ["maxWait":options.maxWait, "timeout":options.timeout, "action":options.actionType.rawValue] as [String : Any]
         let headers = self.headers();
@@ -99,11 +103,11 @@ public class AgoraActionProcessManager {
                   let code = dic["code"] as? Int,
                   let msg = dic["msg"] as? String else {
                 
-                success?(AgoraActionResult(code: AgoraActionHTTPOK, msg: ""))
+                success?(AgoraActionResponse(code: AgoraActionHTTPOK, msg: ""))
                 return;
             }
 
-            success?(AgoraActionResult(code: code, msg: msg))
+            success?(AgoraActionResponse(code: code, msg: msg))
             
         } failure: { (error, code) in
             failure?(error)
@@ -113,24 +117,24 @@ public class AgoraActionProcessManager {
     public func deleteAgoraAction(processUuid: String, success: AgoraActionHTTPSuccess?, failure: AgoraActionHTTPFailure?) {
         
         // /invitation/apps/{appId}/v1/rooms/{roomUuid}/process/{processUuid}
-        let urlString = "\(self.config.baseURL)/invitation/apps/\(self.config.appId)/v1/rooms/\(self.config.roomUuid)/process/\(processUuid)"
+        let urlString = "\(self.config.baseURL)/invitation/apps/\(self.config.appId)/\(HTTP_VERSION)/rooms/\(self.config.roomUuid)/process/\(processUuid)"
 
         let params = [:] as! [String: Any]
         let headers = self.headers();
         
         AgoraActionHTTPClient.put(urlString, params: params, headers: headers) { (dictionary) in
             
-            var result: AgoraActionResult
+            var result: AgoraActionResponse
             
             guard let dic = dictionary as? [String : Any],
                   let code = dic["code"] as? Int,
                   let msg = dic["msg"] as? String else {
                 
-                success?(AgoraActionResult(code: AgoraActionHTTPOK, msg: ""))
+                success?(AgoraActionResponse(code: AgoraActionHTTPOK, msg: ""))
                 return;
             }
             
-            result = AgoraActionResult(code: code, msg: msg)
+            result = AgoraActionResponse(code: code, msg: msg)
             success?(result)
             
         } failure: { (error, code) in
@@ -141,24 +145,24 @@ public class AgoraActionProcessManager {
     public func startAgoraActionProcess(options: AgoraActionStartOptions, success: AgoraActionHTTPSuccess?, failure: AgoraActionHTTPFailure?) {
         
         // /invi    tation/apps/{appId}/v1/rooms/{roomUuid}/users/{toUserUuid}/process/{processUuid}
-        let urlString = "\(self.config.baseURL)/invitation/apps/\(self.config.appId)/v1/rooms/\(self.config.roomUuid)/users/\(options.toUserUuid)/process/\(options.processUuid)"
+        let urlString = "\(self.config.baseURL)/invitation/apps/\(self.config.appId)/\(HTTP_VERSION)/rooms/\(self.config.roomUuid)/users/\(options.toUserUuid)/process/\(options.processUuid)"
 
         let params = ["fromUserUuid":options.fromUserUuid, "payload":options.payload] as [String : Any]
         let headers = self.headers();
         
         AgoraActionHTTPClient.post(urlString, params: params, headers: headers) { (dictionary) in
             
-            var result: AgoraActionResult
+            var result: AgoraActionResponse
             
             guard let dic = dictionary as? [String : Any],
                   let code = dic["code"] as? Int,
                   let msg = dic["msg"] as? String else {
                 
-                success?(AgoraActionResult(code: AgoraActionHTTPOK, msg: ""))
+                success?(AgoraActionResponse(code: AgoraActionHTTPOK, msg: ""))
                 return;
             }
             
-            result = AgoraActionResult(code: code, msg: msg)
+            result = AgoraActionResponse(code: code, msg: msg)
             success?(result)
             
         } failure: { (error, code) in
@@ -169,24 +173,25 @@ public class AgoraActionProcessManager {
     public func stopAgoraActionProcess(options: AgoraActionStopOptions, success: AgoraActionHTTPSuccess?, failure: AgoraActionHTTPFailure?) {
         
         // /invitation/apps/{appId}/v1/rooms/{roomUuid}/users/{toUserUuid}/process/{processUuid}
-        let urlString = "\(self.config.baseURL)/invitation/apps/\(self.config.appId)/v1/rooms/\(self.config.roomUuid)/users/\(options.toUserUuid)/process/\(options.processUuid)"
+        let urlString = "\(self.config.baseURL)/invitation/apps/\(self.config.appId)/\(HTTP_VERSION)/rooms/\(self.config.roomUuid)/users/\(options.toUserUuid)/process/\(options.processUuid)"
 
-        let params = ["action":options.action.rawValue, "fromUserUuid":options.fromUserUuid, "payload":options.payload] as [String : Any]
+        let params = ["action":options.action.rawValue, "fromUserUuid":options.fromUserUuid, "payload":options.payload,
+            "waitAck":options.waitAck] as [String : Any]
         let headers = self.headers();
         
         AgoraActionHTTPClient.del(urlString, params: params, headers: headers) { (dictionary) in
             
-            var result: AgoraActionResult
+            var result: AgoraActionResponse
             
             guard let dic = dictionary as? [String : Any],
                   let code = dic["code"] as? Int,
                   let msg = dic["msg"] as? String else {
                 
-                success?(AgoraActionResult(code: AgoraActionHTTPOK, msg: ""))
+                success?(AgoraActionResponse(code: AgoraActionHTTPOK, msg: ""))
                 return;
             }
             
-            result = AgoraActionResult(code: code, msg: msg)
+            result = AgoraActionResponse(code: code, msg: msg)
             success?(result)
             
         } failure: { (error, code) in

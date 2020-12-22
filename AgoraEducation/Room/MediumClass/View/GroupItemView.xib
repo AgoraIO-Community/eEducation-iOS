@@ -22,6 +22,13 @@
                         <constraint firstAttribute="width" constant="28" id="tkU-OP-IrY"/>
                     </constraints>
                 </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mask" translatesAutoresizingMaskIntoConstraints="NO" id="zO6-8b-2tb">
+                    <rect key="frame" x="19.5" y="9" width="30" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="B8j-1z-WQ5"/>
+                        <constraint firstAttribute="width" constant="30" id="XNj-vJ-eK3"/>
+                    </constraints>
+                </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lUt-91-aU4">
                     <rect key="frame" x="0.0" y="44" width="69" height="15"/>
                     <constraints>
@@ -53,6 +60,7 @@
             <constraints>
                 <constraint firstItem="voh-dS-xn5" firstAttribute="centerX" secondItem="XO3-jU-Qxs" secondAttribute="centerX" id="JJN-xi-GJ9"/>
                 <constraint firstItem="fBw-Mq-kk0" firstAttribute="leading" secondItem="Vm6-NU-RRG" secondAttribute="trailing" constant="3" id="Ndw-XA-BF4"/>
+                <constraint firstItem="zO6-8b-2tb" firstAttribute="leading" secondItem="voh-dS-xn5" secondAttribute="leading" constant="-1" id="OlA-Du-CAB"/>
                 <constraint firstItem="Vm6-NU-RRG" firstAttribute="leading" secondItem="XO3-jU-Qxs" secondAttribute="leading" constant="8" id="S77-ZW-LwK"/>
                 <constraint firstItem="fBw-Mq-kk0" firstAttribute="top" secondItem="lUt-91-aU4" secondAttribute="bottom" constant="5" id="V0S-40-1PZ"/>
                 <constraint firstItem="lUt-91-aU4" firstAttribute="leading" secondItem="XO3-jU-Qxs" secondAttribute="leading" id="bbD-og-mc3"/>
@@ -60,11 +68,13 @@
                 <constraint firstAttribute="trailing" secondItem="lUt-91-aU4" secondAttribute="trailing" id="cL6-te-kFW"/>
                 <constraint firstItem="Vm6-NU-RRG" firstAttribute="top" secondItem="lUt-91-aU4" secondAttribute="bottom" constant="6" id="ctH-d9-JRn"/>
                 <constraint firstItem="voh-dS-xn5" firstAttribute="top" secondItem="XO3-jU-Qxs" secondAttribute="top" constant="10" id="deQ-tY-kvo"/>
+                <constraint firstItem="zO6-8b-2tb" firstAttribute="top" secondItem="voh-dS-xn5" secondAttribute="top" constant="-1" id="nih-Ph-vHf"/>
                 <constraint firstItem="lUt-91-aU4" firstAttribute="top" secondItem="voh-dS-xn5" secondAttribute="bottom" constant="6" id="oS0-hS-vZ2"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="avator" destination="voh-dS-xn5" id="6bR-YQ-YVK"/>
+                <outlet property="iconMask" destination="zO6-8b-2tb" id="Ksr-sK-wml"/>
                 <outlet property="name" destination="lUt-91-aU4" id="Hbd-DR-xxI"/>
                 <outlet property="rewardNum" destination="fBw-Mq-kk0" id="bJS-R9-b2m"/>
                 <outlet property="star" destination="Vm6-NU-RRG" id="54i-ho-Pxc"/>
@@ -75,7 +85,8 @@
     </objects>
     <resources>
         <image name="group_avatar" width="28" height="28"/>
-        <image name="reward_star_blue.png" width="128" height="128"/>
+        <image name="mask" width="28" height="28"/>
+        <image name="reward_star_blue.png" width="8" height="8"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

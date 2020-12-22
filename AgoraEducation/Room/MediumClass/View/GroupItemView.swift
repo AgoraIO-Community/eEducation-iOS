@@ -14,6 +14,8 @@ class GroupItemView: UIView {
     @IBOutlet weak var star: UIImageView!
     @IBOutlet weak var starLeftConstraint: NSLayoutConstraint!
     @IBOutlet weak var rewardNum: UILabel!
+
+    @IBOutlet weak var iconMask: UIImageView!
     
     override class func awakeFromNib() {
         super.awakeFromNib()
@@ -26,6 +28,7 @@ class GroupItemView: UIView {
         self.alpha = 1
         self.avator.alpha = 1
         self.star.image = UIImage(named: "reward_star_blue")
+        self.iconMask.isHidden = true
         
         // 0=offline  1= online
         if model.state == 0 {
@@ -33,7 +36,7 @@ class GroupItemView: UIView {
             self.rewardNum.text = "0"
             self.alpha = 0.3
         } else if model.stream != nil {
-            self.avator.alpha = 0.8
+            self.iconMask.isHidden = false
         }
 
         let label = UILabel()

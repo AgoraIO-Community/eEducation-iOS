@@ -67,7 +67,7 @@
             type = AgoraHandsUpOCTypeApplyPublish;
         }
         
-        AgoraActionConfigInfoMessageOC *configInfo = [self.processManager analyzeConfigInfoMessageWithRoomProperties:room.roomProperties].firstObject;
+        AgoraActionConfigInfoResponseOC *configInfo = [self.processManager analyzeConfigInfoMessageWithRoomProperties:room.roomProperties].firstObject;
         NSInteger timeOut = 0;
         if(configInfo != nil){
             timeOut = configInfo.timeout;
@@ -143,7 +143,7 @@
                     @"role":@(self.localUser.role)
                 }
             };
-            [weakself.processManager startAgoraActionProcessWithOptions:options success:^(AgoraActionResultOC * _Nonnull result) {
+            [weakself.processManager startAgoraActionProcessWithOptions:options success:^(AgoraActionResponseOC * _Nonnull result) {
 
                 if (result.code != 0) {
                     [BaseViewController showToast:result.msg];
@@ -165,7 +165,7 @@
             options.toUserUuid = teacher.userUuid;
             options.processUuid = self.processUuid;
             options.fromUserUuid = self.localUser.userUuid;
-            options.actionType = AgoraActionTypeOCCancel;
+            options.action = AgoraActionTypeOCCancel;
             options.payload = @{
                 @"action":@(AgoraActionTypeOCCancel),
                 @"fromUser":@{
@@ -175,7 +175,7 @@
                 }
             };
             
-            [weakself.processManager stopAgoraActionProcessWithOptions:options success:^(AgoraActionResultOC * _Nonnull result) {
+            [weakself.processManager stopAgoraActionProcessWithOptions:options success:^(AgoraActionResponseOC * _Nonnull result) {
                 
                 if (result.code != 0) {
                     [BaseViewController showToast:result.msg];

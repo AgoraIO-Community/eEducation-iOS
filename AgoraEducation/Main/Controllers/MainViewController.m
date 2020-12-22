@@ -159,6 +159,7 @@
 }
 
 - (IBAction)joinRoom:(UIButton *)sender {
+    
     NSString *userName = self.userNameTextFiled.text;
     NSString *roomName = self.classNameTextFiled.text;
     
@@ -202,19 +203,6 @@
     config.roomName = roomName;
     config.roomUuid = self.roomUuid;
     config.sceneType = self.sceneType;
-    config.roomProperty = @{
-        @"processes":@{
-            self.roomUuid:@{
-                @"maxWait":@4,
-                @"maxAccept":@1,
-                @"timeout":@30
-            }
-        },
-        @"handUpStates":@{
-            @"state":@1,
-            @"autoCoVideo":@0
-        }
-    };
     
     WEAK(self);
     [self setLoadingVisible:YES];
