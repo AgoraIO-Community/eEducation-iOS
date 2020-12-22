@@ -29,6 +29,9 @@ KickOffClassroomText = "您被老师踢出了教室!";
 
 OffLineText = "（离线）";
 
+GroupPersonText = "人";
+GroupStageText = "正在台上";
+
 MaterialsAreaText = "教材区";
 ChatroomText = "消息";
 StudentListText = "学生列表";

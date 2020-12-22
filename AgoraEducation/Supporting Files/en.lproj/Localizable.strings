@@ -29,6 +29,9 @@ KickOffClassroomText = "you were kicked out of the classroom by the teacher!";
 
 OffLineText = "（offline）";
 
+GroupPersonText = " person";
+GroupStageText = "on stage";
+
 MaterialsAreaText = "Materials area";
 ChatroomText = "Chatroom";
 StudentListText = "Student List";

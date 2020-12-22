@@ -70,11 +70,11 @@ class GroupCell: UITableViewCell {
         }
         
         lastItemView?.equalRight(to: self.scroll, attribute: .right, value: 0)
-        
+    
         let str = groupModel.groupName
-        let countStr = "(\(onLineCount)人)"
+        let countStr = "(\(onLineCount)\(NSLocalizedString("GroupPersonText", comment: "")))"
         if groupModel.isPK {
-            let tag = "(正在台上)"
+            let tag = "\(NSLocalizedString("GroupStageText", comment: ""))"
             let attr: NSMutableAttributedString = NSMutableAttributedString(string: str+countStr+tag)
             attr.addAttribute(.foregroundColor, value:UIColor(red: 88/255.0, green: 99/255.0, blue: 118/255.0, alpha: 1), range: NSMakeRange(str.count, countStr.count))
             attr.addAttribute(.foregroundColor, value:UIColor(red: 68/255.0, green: 162/255.0, blue: 252/255.0, alpha: 1), range: NSMakeRange(str.count + countStr.count, tag.count))
