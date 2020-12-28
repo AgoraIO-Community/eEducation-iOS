@@ -37,28 +37,14 @@
     [self initActivityIndicator];
     [self setLoadingVisible:YES];
     AgoraEduManager.shareManager.roomManager.delegate = self;
+    AgoraEduManager.shareManager.studentService.delegate = self;
+    if (self.sceneType == EduSceneTypeBreakout) {
+        AgoraEduManager.shareManager.groupRoomManager.delegate = self;
+        AgoraEduManager.shareManager.groupStudentService.delegate = self;
+    }
     
-    WEAK(self);
-    [AgoraEduManager.shareManager joinClassroomWithSceneType:self.sceneType userName:self.userName success:^{
-
-        [weakself setLoadingVisible:NO];
-        
-        // delegate
-        AgoraEduManager.shareManager.studentService.delegate = weakself;
-        if (weakself.sceneType == EduSceneTypeBreakout) {
-            AgoraEduManager.shareManager.groupRoomManager.delegate = weakself;
-            AgoraEduManager.shareManager.groupStudentService.delegate = weakself;
-        }
-        
-        weakself.hasSignalReconnect = NO;
-        [weakself initLocalUser];
-        
-        [weakself onSyncSuccess];
-        
-    } failure:^(NSString * _Nonnull errorMsg) {
-        [weakself setLoadingVisible:NO];
-        [BaseViewController showToast:errorMsg];
-    }];
+    self.hasSignalReconnect = NO;
+    [self initLocalUser];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -404,8 +390,6 @@
 }
 
 #pragma mark Subclass implementation
-- (void)onSyncSuccess {
-}
 - (void)onSendMessage:(EETextMessage *)message {
 }
 - (void)onReconnected {

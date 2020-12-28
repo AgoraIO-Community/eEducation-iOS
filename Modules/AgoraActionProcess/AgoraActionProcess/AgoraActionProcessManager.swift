@@ -57,12 +57,8 @@ public class AgoraActionProcessManager {
     
     // message from `userMessageReceived` call back
     public func analyzeActionMessage(message: String?) -> AgoraActionInfoResponse? {
-        
-        if message == nil || !JSONSerialization.isValidJSONObject(message) {
-            return nil
-        }
     
-        guard let msgData = message!.data(using: .utf8), let dic = try? JSONSerialization.jsonObject(with: msgData, options: []) as? [String: Any] else {
+        guard let msgData = message?.data(using: .utf8), let dic = try? JSONSerialization.jsonObject(with: msgData, options: []) as? [String: Any] else {
             return nil
         }
         
@@ -73,10 +69,10 @@ public class AgoraActionProcessManager {
         guard let data = dic["data"] as? [String: Any] else {
             return nil
         }
-        let processUuid = (dic["processUuid"] as? String) ?? ""
-        let action = (dic["action"] as? Int) ?? AgoraActionType.apply.rawValue
-        let fromUser: Dictionary<String, Any> = (dic["fromUser"] as? Dictionary<String, Any>) ?? [:]
-        let payload: Dictionary<String, Any> = (dic["payload"] as? Dictionary<String, Any>) ?? [:]
+        let processUuid = (data["processUuid"] as? String) ?? ""
+        let action = (data["action"] as? Int) ?? AgoraActionType.apply.rawValue
+        let fromUser: Dictionary<String, Any> = (data["fromUser"] as? Dictionary<String, Any>) ?? [:]
+        let payload: Dictionary<String, Any> = (data["payload"] as? Dictionary<String, Any>) ?? [:]
         
         
         let userUuid = (fromUser["userUuid"] as? String) ?? ""
@@ -176,7 +172,7 @@ public class AgoraActionProcessManager {
         let urlString = "\(self.config.baseURL)/invitation/apps/\(self.config.appId)/\(HTTP_VERSION)/rooms/\(self.config.roomUuid)/users/\(options.toUserUuid)/process/\(options.processUuid)"
 
         let params = ["action":options.action.rawValue, "fromUserUuid":options.fromUserUuid, "payload":options.payload,
-            "waitAck":options.waitAck] as [String : Any]
+            "waitAck":options.waitAck.rawValue] as [String : Any]
         let headers = self.headers();
         
         AgoraActionHTTPClient.del(urlString, params: params, headers: headers) { (dictionary) in

@@ -159,7 +159,7 @@
 }
 
 - (IBAction)joinRoom:(UIButton *)sender {
-    
+
     NSString *userName = self.userNameTextFiled.text;
     NSString *roomName = self.classNameTextFiled.text;
     
@@ -210,35 +210,44 @@
     [AgoraEduManager.shareManager initWithUserUuid:self.userUuid userName:userName tag:self.sceneType success:^{
             
         [AgoraEduManager.shareManager schduleClassroomWithConfig:config success:^{
-            [weakself setLoadingVisible:NO];
-            if(weakself.sceneType == EduSceneType1V1) {
-                if(IsPad){
-                    [weakself joinRoomWithIdentifier:@"oneToOneRoom-iPad"];
-                } else {
-                    [weakself joinRoomWithIdentifier:@"oneToOneRoom"];
-                }
-            } else if(weakself.sceneType == EduSceneTypeSmall) {
-                if(IsPad){
-                    [weakself joinRoomWithIdentifier:@"smallRoom-iPad"];
-                } else {
-                    [weakself joinRoomWithIdentifier:@"smallRoom"];
-                }
-            } else if(weakself.sceneType == EduSceneTypeBig) {
-                if(IsPad){
-                    [weakself joinRoomWithIdentifier:@"bigRoom-iPad"];
-                } else {
-                    [weakself joinRoomWithIdentifier:@"bigRoom"];
-                }
-            } else if(weakself.sceneType == EduSceneTypeBreakout) {
-                if(IsPad){
-                   [weakself joinRoomWithIdentifier:@"boRoom-iPad"];
-                } else {
-                   [weakself joinRoomWithIdentifier:@"boRoom"];
-                }
-            } else if(weakself.sceneType == EduSceneTypeMedium) {
-                [weakself joinRoomWithIdentifier:@"groupRoom"];
-            }
             
+            [AgoraEduManager.shareManager joinClassroomWithSceneType:self.sceneType userName:self.userNameTextFiled.text success:^{
+
+                [weakself setLoadingVisible:NO];
+                
+                if(weakself.sceneType == EduSceneType1V1) {
+                    if(IsPad){
+                        [weakself joinRoomWithIdentifier:@"oneToOneRoom-iPad"];
+                    } else {
+                        [weakself joinRoomWithIdentifier:@"oneToOneRoom"];
+                    }
+                } else if(weakself.sceneType == EduSceneTypeSmall) {
+                    if(IsPad){
+                        [weakself joinRoomWithIdentifier:@"smallRoom-iPad"];
+                    } else {
+                        [weakself joinRoomWithIdentifier:@"smallRoom"];
+                    }
+                } else if(weakself.sceneType == EduSceneTypeBig) {
+                    if(IsPad){
+                        [weakself joinRoomWithIdentifier:@"bigRoom-iPad"];
+                    } else {
+                        [weakself joinRoomWithIdentifier:@"bigRoom"];
+                    }
+                } else if(weakself.sceneType == EduSceneTypeBreakout) {
+                    if(IsPad){
+                       [weakself joinRoomWithIdentifier:@"boRoom-iPad"];
+                    } else {
+                       [weakself joinRoomWithIdentifier:@"boRoom"];
+                    }
+                } else if(weakself.sceneType == EduSceneTypeMedium) {
+                    [weakself joinRoomWithIdentifier:@"groupRoom"];
+                }
+                
+            } failure:^(NSString * _Nonnull errorMsg) {
+                [weakself setLoadingVisible:NO];
+                [weakself.view makeToast:errorMsg];
+            }];
+
         } failure:^(NSString * _Nonnull errorMsg) {
             [weakself setLoadingVisible:NO];
             [weakself.view makeToast:errorMsg];

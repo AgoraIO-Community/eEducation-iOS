@@ -99,7 +99,7 @@ public class AgoraActionProcessManagerOC: NSObject {
     // message from `userMessageReceived` call back
     @objc public func analyzeActionMessage(message: String?) -> AgoraActionInfoResponseOC? {
         
-        guard let swiftInfo = self.manager?.analyzeActionMessage(message: message) else {
+        guard let swiftInfo = self.manager?.analyzeActionMessage( message: message) else {
             return nil
         }
         

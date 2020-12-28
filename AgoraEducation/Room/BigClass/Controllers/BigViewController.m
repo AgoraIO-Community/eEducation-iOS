@@ -55,6 +55,7 @@
     [self addNotification];
     
     [self handleDeviceOrientationChange];
+    [self onSyncSuccess];
 }
 
 - (void)initData {

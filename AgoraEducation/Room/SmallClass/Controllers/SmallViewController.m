@@ -53,6 +53,7 @@
     [self setupView];
     [self initData];
     [self addNotification];
+    [self onSyncSuccess];
 }
 
 - (void)initData {

@@ -69,6 +69,8 @@
     [self setupView];
     [self initData];
     [self addNotification];
+    
+    [self onSyncSuccess];
 }
 
 - (void)initData {
@@ -416,7 +418,7 @@
     InvitationModel *model = [InvitationModel yy_modelWithJSON:textMessage.message];
     if(model == nil || model.cmd != INVITATION_CMD) {
         // action
-        AgoraActionStopOptionsOC *action = [AgoraActionStopOptionsOC yy_modelWithJSON:textMessage.message];
+        AgoraActionInfoResponseOC *action = [self.processManager analyzeActionMessageWithMessage:textMessage.message];
         if(action != nil && action.action == AgoraActionTypeOCReject) {
 //            self showTipWithMessage:<#(NSString *)#>
             [self.handsUpManager updateHandsUpWithState:AgoraHandsUpOCStateNone];
@@ -616,7 +618,7 @@
     [self updateChatViews];
 }
 - (void)onUpdateCourseState {
-    [self updateChatViews];
+    [self updateTimeState];
 }
 - (void)onBoardFollowMode:(BOOL)enable {
     NSString *toastMessage;
