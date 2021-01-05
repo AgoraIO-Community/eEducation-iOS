@@ -63,7 +63,7 @@ public class AgoraHandsUpManager {
     fileprivate lazy var timeCountView: UIView = {
         
         let view = UIView(frame: CGRect(x: 0, y: 0, width: 42, height: 46))
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.clear
   
         let bundle = Bundle(for: type(of: self))
         let bubble = UIImage(named: "bubble", in: bundle, compatibleWith: nil)
@@ -79,6 +79,7 @@ public class AgoraHandsUpManager {
     fileprivate lazy var handsUpBtn: UIButton = {
         
         let btn = UIButton(type: .custom)
+        btn.backgroundColor = UIColor.white;
         
         let imageString = self.handsUpState == .handsUp ? "handsdown" : (self.handsUpState == .disabled ? "handsdisable" : "handsup")
         

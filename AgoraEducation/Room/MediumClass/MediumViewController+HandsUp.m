@@ -137,10 +137,9 @@
             options.fromUserUuid = self.localUser.userUuid;
             options.payload = @{
                 @"action":@(AgoraActionTypeOCApply),
-                @"fromUser":@{
-                    @"uuid":self.localUser.userUuid,
-                    @"name":self.localUser.userName,
-                    @"role":@(self.localUser.role)
+                @"fromRoom":@{
+                    @"uuid":self.roomUuid,
+                    @"name":self.className,
                 }
             };
             [weakself.processManager startAgoraActionProcessWithOptions:options success:^(AgoraActionResponseOC * _Nonnull result) {

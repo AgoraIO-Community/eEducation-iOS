@@ -345,57 +345,69 @@
         
         NSDictionary *students = NoNullDictionary(room.roomProperties[@"students"]);
 
-        [AgoraEduManager.shareManager.roomManager getFullStreamListWithSuccess:^(NSArray<EduStream *> * _Nonnull streams) {
-            
-            [weakself.topStudentVideoList removeAllObjects];
-            [weakself.btmStudentVideoList removeAllObjects];
-            for (EduStream *stream in streams) {
-                
-                if (stream.userInfo.role == EduRoleTypeTeacher){
-                    continue;
-                }
-            
-                // display
-                StudentVideoStream *videoStream = [[StudentVideoStream alloc] initWithStreamUuid:stream.streamUuid userInfo:stream.userInfo];
-                videoStream.streamName = stream.streamName;
-                videoStream.sourceType = stream.sourceType;
-                videoStream.hasVideo = stream.hasVideo;
-                videoStream.hasAudio = stream.hasAudio;
-    
-                if (group2Info != nil && [group2Info.members containsObject:stream.userInfo.userUuid]) {
-                    [weakself.btmStudentVideoList addObject:videoStream];
-                } else {
-                    [weakself.topStudentVideoList addObject:videoStream];
-                }
-                
-                // find user
-                NSDictionary *studentDic = NoNullDictionary(students[stream.userInfo.userUuid]);
-                StudentInfo *studentInfo = [StudentInfo yy_modelWithDictionary:studentDic];
-                if(studentInfo != nil) {
-                    videoStream.totalReward += studentInfo.reward;
-                }
-            }
-            
-            weakself.topStudentListTopCon.constant = -VideoConstraint;
-            weakself.btmStudentListBottomCon.constant = -VideoConstraint;
-            weakself.topStudentVideoListView.hidden = YES;
-            weakself.btmStudentVideoListView.hidden = YES;
-            if (weakself.topStudentVideoList.count > 0) {
-                weakself.topStudentListTopCon.constant = 0;
-                weakself.topStudentVideoListView.hidden = NO;
-            }
-            if (weakself.btmStudentVideoList.count > 0) {
-                weakself.btmStudentListBottomCon.constant = 0;
-                weakself.btmStudentVideoListView.hidden = NO;
-            }
-            
-            [weakself.topStudentVideoListView updateStudentArray:weakself.topStudentVideoList];
-            [weakself.btmStudentVideoListView updateStudentArray:weakself.btmStudentVideoList];
+        [AgoraEduManager.shareManager.roomManager getFullUserListWithSuccess:^(NSArray<EduUser *> * _Nonnull users) {
                     
-        } failure:^(NSError * _Nonnull error) {
-            [BaseViewController showToast:error.localizedDescription];
-        }];
+            [AgoraEduManager.shareManager.roomManager getFullStreamListWithSuccess:^(NSArray<EduStream *> * _Nonnull streams) {
+                
+                [weakself.topStudentVideoList removeAllObjects];
+                [weakself.btmStudentVideoList removeAllObjects];
+                for (EduStream *stream in streams) {
+                    
+                    if (stream.userInfo.role == EduRoleTypeTeacher){
+                        continue;
+                    }
+                    
+                    NSPredicate *userPredicate = [NSPredicate predicateWithFormat:@"userUuid = %@", stream.userInfo.userUuid];
+                    NSArray *userFilters = [users filteredArrayUsingPredicate:userPredicate];
+                    if (userFilters == nil || userFilters.count == 0) {
+                        continue;
+                    }
+                
+                    // display
+                    StudentVideoStream *videoStream = [[StudentVideoStream alloc] initWithStreamUuid:stream.streamUuid userInfo:stream.userInfo];
+                    videoStream.streamName = stream.streamName;
+                    videoStream.sourceType = stream.sourceType;
+                    videoStream.hasVideo = stream.hasVideo;
+                    videoStream.hasAudio = stream.hasAudio;
         
+                    if (group2Info != nil && [group2Info.members containsObject:stream.userInfo.userUuid]) {
+                        [weakself.btmStudentVideoList addObject:videoStream];
+                    } else {
+                        [weakself.topStudentVideoList addObject:videoStream];
+                    }
+                    
+                    // find user
+                    NSDictionary *studentDic = NoNullDictionary(students[stream.userInfo.userUuid]);
+                    StudentInfo *studentInfo = [StudentInfo yy_modelWithDictionary:studentDic];
+                    if(studentInfo != nil) {
+                        videoStream.totalReward = studentInfo.reward;
+                    }
+                }
+                
+                weakself.topStudentListTopCon.constant = -VideoConstraint;
+                weakself.btmStudentListBottomCon.constant = -VideoConstraint;
+                weakself.topStudentVideoListView.hidden = YES;
+                weakself.btmStudentVideoListView.hidden = YES;
+                if (weakself.topStudentVideoList.count > 0) {
+                    weakself.topStudentListTopCon.constant = 0;
+                    weakself.topStudentVideoListView.hidden = NO;
+                }
+                if (weakself.btmStudentVideoList.count > 0) {
+                    weakself.btmStudentListBottomCon.constant = 0;
+                    weakself.btmStudentVideoListView.hidden = NO;
+                }
+                
+                [weakself.topStudentVideoListView updateStudentArray:weakself.topStudentVideoList];
+                [weakself.btmStudentVideoListView updateStudentArray:weakself.btmStudentVideoList];
+                        
+            } failure:^(NSError * _Nonnull error) {
+                [BaseViewController showToast:error.localizedDescription];
+            }];
+            
+        } failure:^(NSError * _Nonnull error) {
+            [weakself showTipWithMessage:error.localizedDescription];
+        }];
+
     } failure:^(NSError * _Nonnull error) {
         [BaseViewController showToast:error.localizedDescription];
     }];
@@ -663,18 +675,19 @@
             break;
         case PropertyCauseTypeGroupReward:
         case PropertyCauseTypeStudentReward:
+            
+            if (propertyCause.cmd == PropertyCauseTypeGroupReward) {
+                NSDictionary *groups = NoNullDictionary(NoNullDictionary(classroom.roomProperties)[@"groups"]);
+                GroupsInfo *info = [GroupsInfo yy_modelWithDictionary:groups[propertyCause.groupUuid]];
+                for(NSString *member in info.members) {
+                    [NSNotificationCenter.defaultCenter postNotificationName:Notice_Reward_Effect object:member];
+                }
+            } else {
+                [NSNotificationCenter.defaultCenter postNotificationName:Notice_Reward_Effect object:propertyCause.userUuid];
+            }
+            [self reloadStudentViews];
             if (groupStates.state == GroupCommonStateOn) {
                 [self updateStudentList: classroom.roomProperties];
-                
-                if (propertyCause.cmd == PropertyCauseTypeGroupReward) {
-                    NSDictionary *groups = NoNullDictionary(NoNullDictionary(classroom.roomProperties)[@"groups"]);
-                    GroupsInfo *info = [GroupsInfo yy_modelWithDictionary:groups[propertyCause.groupUuid]];
-                    for(NSString *member in info.members) {
-                        [NSNotificationCenter.defaultCenter postNotificationName:Notice_Reward_Effect object:member];
-                    }
-                } else {
-                    [NSNotificationCenter.defaultCenter postNotificationName:Notice_Reward_Effect object:propertyCause.userUuid];
-                }
             }
             break;
         case PropertyCauseTypeHandsUp:

@@ -257,18 +257,25 @@ static RTCManager *manager = nil;
 
     if (currentChannelInfo != nil) {
         if(!currentChannelInfo.isPublish) {
-            int code = 0;
             if(currentChannelInfo.role != AgoraClientRoleBroadcaster) {
-                code = [self setClientRole:AgoraClientRoleBroadcaster channelId:[currentChannelInfo.agoraRtcChannel getChannelId]];
+                int code = [self setClientRole:AgoraClientRoleBroadcaster channelId:[currentChannelInfo.agoraRtcChannel getChannelId]];
+                if (code == 0) {
+                    currentChannelInfo.isPublish = YES;
+                }
+                return code;
             } else {
-                code = [currentChannelInfo.agoraRtcChannel publish];
-                [AgoraLogService logMessageWithDescribe:@"publish:" message:@{@"roomUuid":NoNullString(currentChannelInfo.channelId), @"code":@(code)}];
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    
+                    int code = [currentChannelInfo.agoraRtcChannel publish];
+                    [AgoraLogService logMessageWithDescribe:@"publish:" message:@{@"roomUuid":NoNullString(currentChannelInfo.channelId), @"code":@(code)}];
+                    
+                    if (code == 0) {
+                        currentChannelInfo.isPublish = YES;
+                    }
+                });
             }
 
-            if (code == 0) {
-                currentChannelInfo.isPublish = YES;
-            }
-            return code;
+            return 0;
         }
     }
     

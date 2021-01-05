@@ -99,6 +99,11 @@
                sourceModel.hasVideo != currentModel.hasVideo) {
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
                 [indexPaths addObject:indexPath];
+                
+            } else if ([sourceModel isKindOfClass:StudentVideoStream.class] && [currentModel isKindOfClass:StudentVideoStream.class] && ((StudentVideoStream*)sourceModel).totalReward != ((StudentVideoStream*)currentModel).totalReward) {
+                
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+                [indexPaths addObject:indexPath];
             }
         }
 
